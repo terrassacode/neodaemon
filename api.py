@@ -174,6 +174,33 @@ class H(BaseHTTPRequestHandler):
                 "sources": sources
             }), "application/json")
 
+
+
+        if path == "/rag-stats":
+            import collections
+            log_path = "/openclaw/logs/rag_queries.jsonl"
+
+            stats = {
+                "total": 0,
+                "confidence": {"low": 0, "medium": 0, "high": 0}
+            }
+
+            try:
+                with open(log_path) as f:
+                    for line in f:
+                        stats["total"] += 1
+                        try:
+                            j = json.loads(line)
+                            c = j.get("confidence")
+                            if c in stats["confidence"]:
+                                stats["confidence"][c] += 1
+                        except:
+                            pass
+            except:
+                pass
+
+            return send(self, 200, json.dumps(stats), "application/json")
+
         if path == "/summary":
             result = subprocess.check_output(["/openclaw/logs/daily_summary.sh"])
             return send(self, 200, result)
