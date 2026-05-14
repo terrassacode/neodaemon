@@ -79,8 +79,13 @@ class H(BaseHTTPRequestHandler):
             max_score = float(max(scores)) if len(scores) > 0 else 0.0
 
             if max_score < 0.30:
-                confidence = "low"
-                answer = "Advertencia: el contexto encontrado es débil.\n\n" + answer
+                return send(self, 200, json.dumps({
+                    "answer": "No hay suficiente contexto relevante para responder con fiabilidad.",
+                    "confidence": "low",
+                    "chunks_used": len(top_chunks),
+                    "score_max": float(max_score)
+                }), "application/json")
+
             elif max_score < 0.60:
                 confidence = "medium"
             else:
