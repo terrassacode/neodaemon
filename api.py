@@ -6,6 +6,8 @@ from rank_bm25 import BM25Okapi
 API_TOKEN = "neodaemon-secure-token"
 CHUNKS_DIR = "/openclaw/workspace/main/rag_store/chunks"
 
+MIN_SCORE = 0.20
+
 def tokenize(text):
     return re.findall(r"\b\w+\b", text.lower())
 
@@ -63,7 +65,7 @@ class H(BaseHTTPRequestHandler):
             top_chunks = [
                 c.get("content", "")
                 for s, c in ranked[:5]
-                if s > 0
+                if s >= MIN_SCORE
             ][:3]
 
             if not top_chunks:
