@@ -8,6 +8,30 @@ CHUNKS_DIR = "/openclaw/workspace/main/rag_store/chunks"
 
 MIN_SCORE = 0.20
 
+
+
+def normalize_query(q):
+    q = q.lower()
+    replacements = {
+        "wharehouse": "warehouse",
+        "warehosue": "warehouse",
+        "lake house": "lakehouse",
+        "one lake": "onelake"
+    }
+    for k, v in replacements.items():
+        q = q.replace(k, v)
+
+    if "warehouse" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    if "lakehouse" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    if "onelake" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    return q
+
 def tokenize(text):
     return re.findall(r"\b\w+\b", text.lower())
 
@@ -108,6 +132,7 @@ class H(BaseHTTPRequestHandler):
 
         if path == "/rag-ask":
             question = q.get("q", [""])[0].strip()
+            question = normalize_query(question)
 
             if not question:
                 return send(self, 400, json.dumps({"error":"missing_question","answer":"Introduce una pregunta."}), "application/json")
