@@ -33,7 +33,7 @@ DOCS, BM25 = load_index()
 
 
 
-def log_query(question, score, confidence, chunks):
+def log_query(question, score, confidence, chunks, sources, answer):
     try:
         log_path = "/openclaw/logs/rag_queries.jsonl"
         entry = {
@@ -41,7 +41,9 @@ def log_query(question, score, confidence, chunks):
             "question": question,
             "score_max": float(score),
             "confidence": confidence,
-            "chunks_used": chunks
+            "chunks_used": chunks,
+            "sources": [s.get("url") for s in sources],
+            "answer_chars": len(answer)
         }
         with open(log_path, "a") as f:
             f.write(json.dumps(entry) + "\n")
@@ -130,7 +132,7 @@ class H(BaseHTTPRequestHandler):
                 if len(sources) == 3:
                     break
 
-            log_query(question, max_score, confidence, len(top_chunks))
+            log_query(question, max_score, confidence, len(top_chunks), sources, answer)
 
             return send(self, 200, json.dumps({
                 "answer": answer,
