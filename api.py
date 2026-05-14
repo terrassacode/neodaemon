@@ -55,11 +55,32 @@ class H(BaseHTTPRequestHandler):
 
         if path == "/rag-ask":
             question = q.get("q", [""])[0].strip()
+
+            if not question:
+                return send(self, 400, json.dumps({"error":"missing_question","answer":"Introduce una pregunta."}), "application/json")
             scores = BM25.get_scores(tokenize(question))
             ranked = sorted(zip(scores, DOCS), key=lambda x: x[0], reverse=True)
-            context = "\n\n".join([c.get("content", "") for s, c in ranked[:3]])
+            top_chunks = [
+                c.get("content", "")
+                for s, c in ranked[:5]
+                if s > 0
+            ][:3]
+
+            if not top_chunks:
+                return send(self, 200, json.dumps({
+                    "answer": "No he encontrado contexto relevante para responder con precisión."
+                }), "application/json")
+
+            context = "\n\n".join(top_chunks)
             answer = ask_llm(context, question)
-            return send(self, 200, json.dumps({"answer": answer}), "application/json")
+
+            max_score = float(max(scores)) if len(scores) > 0 else 0.0
+
+            return send(self, 200, json.dumps({
+                "answer": answer,
+                "chunks_used": len(top_chunks),
+                "score_max": float(max_score)
+            }), "application/json")
 
         if path == "/summary":
             result = subprocess.check_output(["/openclaw/logs/daily_summary.sh"])
