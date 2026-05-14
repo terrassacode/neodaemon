@@ -91,15 +91,27 @@ class H(BaseHTTPRequestHandler):
             else:
                 confidence = "high"
 
-            sources = [
-                {
+            seen = set()
+            sources = []
+
+            for score, c in ranked[:5]:
+                if score < MIN_SCORE:
+                    continue
+
+                url = c.get("url")
+                if url in seen:
+                    continue
+
+                seen.add(url)
+
+                sources.append({
                     "title": c.get("title"),
                     "source": c.get("source"),
-                    "url": c.get("url")
-                }
-                for s, c in ranked[:5]
-                if s >= MIN_SCORE
-            ][:3]
+                    "url": url
+                })
+
+                if len(sources) == 3:
+                    break
 
             return send(self, 200, json.dumps({
                 "answer": answer,
