@@ -54,6 +54,23 @@ def ask_llm(context, question):
     prompt = f"""
 Responde SOLO usando el contexto proporcionado.
 
+Formato obligatorio:
+
+Definición:
+(explicación clara y técnica en 2-3 líneas)
+
+Características clave:
+- punto clave 1
+- punto clave 2
+- punto clave 3
+
+Cuándo usarlo:
+- caso 1
+- caso 2
+
+Limitación del contexto:
+(indica si la respuesta puede ser incompleta)
+
 Reglas:
 - No inventes información
 - No introduzcas conceptos que no estén en el contexto
