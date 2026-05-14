@@ -173,34 +173,60 @@ class H(BaseHTTPRequestHandler):
             question = normalize_query(question)
 
             if not question:
-                return send(self, 400, json.dumps({"error":"missing_question","answer":"Introduce una pregunta."}), "application/json")
+                return send(self, 400, json.dumps({
+                    "error": "missing_question",
+                    "answer": "Introduce una pregunta."
+                }), "application/json")
+
             scores = BM25.get_scores(tokenize(question))
             ranked = sorted(zip(scores, DOCS), key=lambda x: x[0], reverse=True)
-            top_chunks = [
-                c.get("content", "")
-                for s, c in ranked[:5]
-                if s >= MIN_SCORE
-            ][:3]
 
-            retrieval_mode = "bm25"
+            candidates = []
+
+            for score, c in ranked[:5]:
+                if score >= MIN_SCORE:
+                    candidates.append({
+                        "content": c.get("content", ""),
+                        "score": float(score),
+                        "title": c.get("title"),
+                        "source": c.get("source"),
+                        "url": c.get("url")
+                    })
+
+            for score, d in vector_search(question):
+                candidates.append({
+                    "content": d.get("content", ""),
+                    "score": float(score),
+                    "title": d.get("title"),
+                    "source": d.get("source"),
+                    "url": d.get("url")
+                })
+
+            candidates = sorted(candidates, key=lambda x: x["score"], reverse=True)
+
+            seen_content = set()
+            top_chunks = []
+            top_meta = []
+
+            for c in candidates:
+                content = c.get("content", "")
+                if not content or content in seen_content:
+                    continue
+                seen_content.add(content)
+                top_chunks.append(content)
+                top_meta.append(c)
+                if len(top_chunks) == 3:
+                    break
 
             if not top_chunks:
-                vdocs = vector_search(question)
-                if vdocs:
-                    retrieval_mode = "vector"
-                    top_chunks = [d.get("content","") for score, d in vdocs]
-                else:
-                    return send(self, 200, json.dumps({
-                        "answer": "No he encontrado contexto relevante para responder con precisión."
-                    }), "application/json")
+                return send(self, 200, json.dumps({
+                    "answer": "No he encontrado contexto relevante para responder con precisión."
+                }), "application/json")
 
             context = "\n\n".join(top_chunks)
             answer = ask_llm(context, question)
 
-            if retrieval_mode == "vector":
-                max_score = max([score for score, d in vdocs]) if vdocs else 0.0
-            else:
-                max_score = float(max(scores)) if len(scores) > 0 else 0.0
+            max_score = max([c["score"] for c in top_meta]) if top_meta else 0.0
 
             if max_score < 0.30:
                 return send(self, 200, json.dumps({
@@ -209,35 +235,24 @@ class H(BaseHTTPRequestHandler):
                     "chunks_used": len(top_chunks),
                     "score_max": float(max_score)
                 }), "application/json")
-
             elif max_score < 0.60:
                 confidence = "medium"
             else:
                 confidence = "high"
 
-            seen = set()
+            seen_urls = set()
             sources = []
 
-            if retrieval_mode == "vector":
-                source_items = [(score, d) for score, d in vdocs]
-            else:
-                source_items = [(score, c) for score, c in ranked[:5] if score >= MIN_SCORE]
-
-            for score, c in source_items:
+            for c in top_meta:
                 url = c.get("url")
-                if not url or url in seen:
+                if not url or url in seen_urls:
                     continue
-
-                seen.add(url)
-
+                seen_urls.add(url)
                 sources.append({
                     "title": c.get("title"),
                     "source": c.get("source"),
                     "url": url
                 })
-
-                if len(sources) == 3:
-                    break
 
             log_query(question, max_score, confidence, len(top_chunks), sources, answer)
 
@@ -248,8 +263,6 @@ class H(BaseHTTPRequestHandler):
                 "confidence": confidence,
                 "sources": sources
             }), "application/json")
-
-
 
         if path == "/rag-stats":
             import collections
