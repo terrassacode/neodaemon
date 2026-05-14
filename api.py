@@ -91,11 +91,22 @@ class H(BaseHTTPRequestHandler):
             else:
                 confidence = "high"
 
+            sources = [
+                {
+                    "title": c.get("title"),
+                    "source": c.get("source"),
+                    "url": c.get("url")
+                }
+                for s, c in ranked[:5]
+                if s >= MIN_SCORE
+            ][:3]
+
             return send(self, 200, json.dumps({
                 "answer": answer,
                 "chunks_used": len(top_chunks),
                 "score_max": float(max_score),
-                "confidence": confidence
+                "confidence": confidence,
+                "sources": sources
             }), "application/json")
 
         if path == "/summary":
