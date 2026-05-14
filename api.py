@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import json, os, re, urllib.parse, subprocess
+import json, os, re, urllib.parse, subprocess, datetime
 import requests
 from rank_bm25 import BM25Okapi
 
@@ -30,6 +30,23 @@ def load_index():
     return docs, BM25Okapi(tokenized)
 
 DOCS, BM25 = load_index()
+
+
+
+def log_query(question, score, confidence, chunks):
+    try:
+        log_path = "/openclaw/logs/rag_queries.jsonl"
+        entry = {
+            "ts": datetime.datetime.utcnow().isoformat(),
+            "question": question,
+            "score_max": float(score),
+            "confidence": confidence,
+            "chunks_used": chunks
+        }
+        with open(log_path, "a") as f:
+            f.write(json.dumps(entry) + "\n")
+    except:
+        pass
 
 def ask_llm(context, question):
     prompt = f"CONTEXT:\n{context}\n\nQUESTION:\n{question}\n\nAnswer in Spanish."
@@ -112,6 +129,8 @@ class H(BaseHTTPRequestHandler):
 
                 if len(sources) == 3:
                     break
+
+            log_query(question, max_score, confidence, len(top_chunks))
 
             return send(self, 200, json.dumps({
                 "answer": answer,
