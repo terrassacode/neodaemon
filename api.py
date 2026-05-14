@@ -51,7 +51,22 @@ def log_query(question, score, confidence, chunks, sources, answer):
         pass
 
 def ask_llm(context, question):
-    prompt = f"CONTEXT:\n{context}\n\nQUESTION:\n{question}\n\nAnswer in Spanish."
+    prompt = f"""
+Responde SOLO usando el contexto proporcionado.
+
+Reglas:
+- No inventes información
+- No introduzcas conceptos que no estén en el contexto
+- Si no estás seguro, responde: "No hay suficiente contexto para responder con precisión"
+
+Contexto:
+{context}
+
+Pregunta:
+{question}
+
+Respuesta:
+"""
     try:
         r = requests.post("http://127.0.0.1:11434/api/generate", json={
             "model": "llama3.2:3b",
