@@ -78,10 +78,19 @@ class H(BaseHTTPRequestHandler):
 
             max_score = float(max(scores)) if len(scores) > 0 else 0.0
 
+            if max_score < 0.30:
+                confidence = "low"
+                answer = "Advertencia: el contexto encontrado es débil.\n\n" + answer
+            elif max_score < 0.60:
+                confidence = "medium"
+            else:
+                confidence = "high"
+
             return send(self, 200, json.dumps({
                 "answer": answer,
                 "chunks_used": len(top_chunks),
-                "score_max": float(max_score)
+                "score_max": float(max_score),
+                "confidence": confidence
             }), "application/json")
 
         if path == "/summary":
