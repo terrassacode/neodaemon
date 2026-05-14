@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import json, os, re, urllib.parse, subprocess, datetime
+import json, os, re, urllib.parse, subprocess, datetime, math
 import requests
 from rank_bm25 import BM25Okapi
 
@@ -20,6 +20,17 @@ def normalize_query(q):
     }
     for k, v in replacements.items():
         q = q.replace(k, v)
+
+    # normalización semántica
+    if "lago de datos" in q or "lake" in q:
+        q = q.replace("lago de datos", "lakehouse")
+
+    if "almacén" in q or "almacen" in q:
+        q = q.replace("almacén", "warehouse")
+        q = q.replace("almacen", "warehouse")
+
+    if "diferencia" in q and "warehouse" in q and "lakehouse" in q:
+        q = "difference between lakehouse and warehouse in microsoft fabric"
 
     if "warehouse" in q and "fabric" not in q:
         q = q + " microsoft fabric"
@@ -54,6 +65,33 @@ def load_index():
     return docs, BM25Okapi(tokenized)
 
 DOCS, BM25 = load_index()
+
+VECTOR_INDEX = "/openclaw/workspace/main/rag_store/vector/index.jsonl"
+
+def embed_query(text):
+    r = requests.post("http://127.0.0.1:11434/api/embeddings", json={
+        "model": "nomic-embed-text",
+        "prompt": text
+    }, timeout=120)
+    r.raise_for_status()
+    return r.json()["embedding"]
+
+def cosine(a, b):
+    dot = sum(x*y for x, y in zip(a, b))
+    na = math.sqrt(sum(x*x for x in a))
+    nb = math.sqrt(sum(x*x for x in b))
+    return dot / (na * nb)
+
+def vector_search(query, min_score=0.40):
+    try:
+        q_vec = embed_query(query)
+        data = [json.loads(l) for l in open(VECTOR_INDEX)]
+        scored = [(cosine(q_vec, d["embedding"]), d) for d in data]
+        top = sorted(scored, key=lambda x: x[0], reverse=True)[:3]
+        return [(score, d) for score, d in top if score >= min_score]
+    except Exception:
+        return []
+
 
 
 
@@ -97,7 +135,7 @@ Limitación del contexto:
 
 Reglas:
 - No inventes información
-- No introduzcas conceptos que no estén en el contexto
+- No introduzcas conceptos que no estén literalmente respaldados por el contexto\n- No uses términos como NoSQL, OLAP, tiempo real o data mesh salvo que aparezcan claramente en el contexto
 - Si no estás seguro, responde: "No hay suficiente contexto para responder con precisión"
 
 Contexto:
@@ -144,15 +182,25 @@ class H(BaseHTTPRequestHandler):
                 if s >= MIN_SCORE
             ][:3]
 
+            retrieval_mode = "bm25"
+
             if not top_chunks:
-                return send(self, 200, json.dumps({
-                    "answer": "No he encontrado contexto relevante para responder con precisión."
-                }), "application/json")
+                vdocs = vector_search(question)
+                if vdocs:
+                    retrieval_mode = "vector"
+                    top_chunks = [d.get("content","") for score, d in vdocs]
+                else:
+                    return send(self, 200, json.dumps({
+                        "answer": "No he encontrado contexto relevante para responder con precisión."
+                    }), "application/json")
 
             context = "\n\n".join(top_chunks)
             answer = ask_llm(context, question)
 
-            max_score = float(max(scores)) if len(scores) > 0 else 0.0
+            if retrieval_mode == "vector":
+                max_score = max([score for score, d in vdocs]) if vdocs else 0.0
+            else:
+                max_score = float(max(scores)) if len(scores) > 0 else 0.0
 
             if max_score < 0.30:
                 return send(self, 200, json.dumps({
@@ -170,12 +218,14 @@ class H(BaseHTTPRequestHandler):
             seen = set()
             sources = []
 
-            for score, c in ranked[:5]:
-                if score < MIN_SCORE:
-                    continue
+            if retrieval_mode == "vector":
+                source_items = [(score, d) for score, d in vdocs]
+            else:
+                source_items = [(score, c) for score, c in ranked[:5] if score >= MIN_SCORE]
 
+            for score, c in source_items:
                 url = c.get("url")
-                if url in seen:
+                if not url or url in seen:
                     continue
 
                 seen.add(url)
