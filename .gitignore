@@ -1,0 +1,6 @@
+venvs/
+logs/
+*.tar.gz
+__pycache__/
+*.pyc
+workspace/

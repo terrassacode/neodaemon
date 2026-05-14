@@ -1,0 +1,12 @@
+{"timestamp":"2026-05-13T23:50:00","session_id":"sess_001","task_id":"task_001","source":"ssh","action":"dashboard_open","status":"success"}
+{"timestamp":"2026-05-13T23:56:59+02:00","session_id":"sess_001","task_id":"task_001","source":"ssh","action":"openclaw_tui","status":"success"}
+{"timestamp":"2026-05-14T00:03:55+02:00","session_id":"ssh","task_id":"test_action","source":"success","action":"","status":""}
+{"timestamp":"2026-05-14T00:04:10+02:00","session_id":"","task_id":"","source":"","action":"","status":""}
+{"timestamp":"2026-05-14T00:04:47+02:00","session_id":"ssh","task_id":"test_action","source":"success","action":"","status":""}
+{"timestamp":"2026-05-14T00:05:40+02:00","session_id":"sess_1778709795","task_id":"task_1778709817840","source":"ssh","action":"test_action","status":"success"}
+{"timestamp":"2026-05-14T00:09:10+02:00","session_id":"sess_1778709795","task_id":"task_1778709817840","source":"ssh","action":"test_action","status":"success"}
+{"timestamp":"2026-05-14T00:10:30+02:00","session_id":"sess_1778709795","task_id":"task_1778709817840","source":"ssh","action":"openclaw_tui","status":"success","risk_level":"low","duration_ms":1200}
+{"timestamp":"2026-05-14T09:21:40+02:00","session_id":"sess_1778709795","task_id":"task_1778743300262","source":"test","action":"wrapper_check","status":"success","risk_level":"low","duration_ms":1}
+{"timestamp":"2026-05-14T09:22:55+02:00","session_id":"sess_1778709795","task_id":"task_1778743375318","source":"tui","action":"openclaw_tui_start","status":"success","risk_level":"low","duration_ms":0}
+{"timestamp":"2026-05-14T09:28:52+02:00","session_id":"sess_1778709795","task_id":"task_1778743732053","source":"tui","action":"openclaw_tui_start","status":"success","risk_level":"low","duration_ms":0}
+{"timestamp":"2026-05-14T09:29:08+02:00","session_id":"sess_1778709795","task_id":"task_1778743732053","source":"tui","action":"openclaw_tui_end","status":"interrupted","risk_level":"low","duration_ms":16333}

@@ -1,0 +1,41 @@
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import subprocess
+from urllib.parse import urlparse, parse_qs
+
+TOKEN = "neodaemon123"
+
+class Handler(BaseHTTPRequestHandler):
+    def send_text(self, data, code=200):
+        self.send_response(code)
+        self.send_header("Content-type", "text/plain")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(data if isinstance(data, bytes) else data.encode())
+
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        params = parse_qs(parsed.query)
+
+        if "token" not in params or params["token"][0] != TOKEN:
+            self.send_text("Unauthorized", 403)
+            return
+
+        path = parsed.path
+
+        if path == "/status":
+            self.send_text("OK")
+        elif path == "/summary":
+            self.send_text(subprocess.check_output(["/openclaw/logs/daily_summary.sh"]))
+        elif path == "/last-events":
+            self.send_text(subprocess.check_output(["tail", "-n", "10", "/openclaw/logs/runtime/events.jsonl"]))
+        elif path == "/restart-dashboard":
+            subprocess.Popen(["systemctl", "--user", "restart", "openclaw-dashboard.service"])
+            self.send_text("Dashboard restarted")
+        elif path == "/restart-gateway":
+            subprocess.Popen(["systemctl", "--user", "restart", "openclaw-gateway.service"])
+            self.send_text("Gateway restarted")
+        else:
+            self.send_text("Not found", 404)
+
+server = HTTPServer(("0.0.0.0", 5000), Handler)
+server.serve_forever()
