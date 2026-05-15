@@ -1,0 +1,11 @@
+{
+  "containerName": "openclaw-sbx-agent-task-validator-82191968",
+  "backendId": "docker",
+  "runtimeLabel": "openclaw-sbx-agent-task-validator-82191968",
+  "sessionKey": "agent:task-validator",
+  "createdAtMs": 1778494030018,
+  "lastUsedAtMs": 1778494030623,
+  "image": "openclaw-sandbox:bookworm-slim",
+  "configLabelKind": "Image",
+  "configHash": "3bf12ccc0dcdda6794eb93935d5bd347c2bde83c212d13212f8e17f9467ae302"
+}

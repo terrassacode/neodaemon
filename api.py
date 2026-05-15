@@ -114,6 +114,138 @@ def log_query(question, score, confidence, chunks, sources, answer):
 
 def ask_llm(context, question):
     prompt = f"""
+Eres un experto en Microsoft Fabric y data engineering.
+
+Reglas:
+- Usa SOLO el contexto proporcionado
+- Si falta información, dilo
+- Si la pregunta es comparativa, responde en tabla clara
+- No mezcles conceptos no relacionados
+- Sé preciso, técnico y directo
+
+Contexto:
+{context}
+
+Pregunta:
+{question}
+
+Respuesta:
+"""om http.server import BaseHTTPRequestHandler, HTTPServer
+import json, os, re, urllib.parse, subprocess, datetime, math
+import requests
+from rank_bm25 import BM25Okapi
+
+API_TOKEN = "neodaemon-secure-token"
+CHUNKS_DIR = "/openclaw/workspace/main/rag_store/chunks"
+
+MIN_SCORE = 0.20
+
+
+
+def normalize_query(q):
+    q = q.lower()
+    replacements = {
+        "wharehouse": "warehouse",
+        "warehosue": "warehouse",
+        "lake house": "lakehouse",
+        "one lake": "onelake"
+    }
+    for k, v in replacements.items():
+        q = q.replace(k, v)
+
+    # normalización semántica
+    if "lago de datos" in q or "lake" in q:
+        q = q.replace("lago de datos", "lakehouse")
+
+    if "almacén" in q or "almacen" in q:
+        q = q.replace("almacén", "warehouse")
+        q = q.replace("almacen", "warehouse")
+
+    if "diferencia" in q and "warehouse" in q and "lakehouse" in q:
+        q = "difference between lakehouse and warehouse in microsoft fabric"
+
+    if "warehouse" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    if "lakehouse" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    if "onelake" in q and "fabric" not in q:
+        q = q + " microsoft fabric"
+
+    return q
+
+def tokenize(text):
+    return re.findall(r"\b\w+\b", text.lower())
+
+def send(handler, code=200, data="", content_type="text/plain"):
+    handler.send_response(code)
+    handler.send_header("Access-Control-Allow-Origin", "*")
+    handler.send_header("Content-Type", content_type)
+    handler.end_headers()
+    handler.wfile.write(data if isinstance(data, bytes) else data.encode())
+
+def load_index():
+    docs, tokenized = [], []
+    for f in os.listdir(CHUNKS_DIR):
+        if not f.endswith(".json"):
+            continue
+        with open(os.path.join(CHUNKS_DIR, f), encoding="utf-8") as fh:
+            chunk = json.load(fh)
+        docs.append(chunk)
+        tokenized.append(tokenize(chunk.get("content", "")))
+    return docs, BM25Okapi(tokenized)
+
+DOCS, BM25 = load_index()
+
+VECTOR_INDEX = "/openclaw/workspace/main/rag_store/vector/index.jsonl"
+
+def embed_query(text):
+    r = requests.post("http://127.0.0.1:11434/api/embeddings", json={
+        "model": "nomic-embed-text",
+        "prompt": text
+    }, timeout=240)
+    r.raise_for_status()
+    return r.json()["embedding"]
+
+def cosine(a, b):
+    dot = sum(x*y for x, y in zip(a, b))
+    na = math.sqrt(sum(x*x for x in a))
+    nb = math.sqrt(sum(x*x for x in b))
+    return dot / (na * nb)
+
+def vector_search(query, min_score=0.40):
+    try:
+        q_vec = embed_query(query)
+        data = [json.loads(l) for l in open(VECTOR_INDEX)]
+        scored = [(cosine(q_vec, d["embedding"]), d) for d in data]
+        top = sorted(scored, key=lambda x: x[0], reverse=True)[:3]
+        return [(score, d) for score, d in top if score >= min_score]
+    except Exception:
+        return []
+
+
+
+
+def log_query(question, score, confidence, chunks, sources, answer):
+    try:
+        log_path = "/openclaw/logs/rag_queries.jsonl"
+        entry = {
+            "ts": datetime.datetime.utcnow().isoformat(),
+            "question": question,
+            "score_max": float(score),
+            "confidence": confidence,
+            "chunks_used": chunks,
+            "sources": [s.get("url") for s in sources],
+            "answer_chars": len(answer)
+        }
+        with open(log_path, "a") as f:
+            f.write(json.dumps(entry) + "\n")
+    except:
+        pass
+
+def ask_llm(context, question):
+    prompt = f"""
 Responde SOLO usando el contexto proporcionado.
 
 Formato obligatorio:
