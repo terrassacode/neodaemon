@@ -1,0 +1,11 @@
+{
+  "auto_approve_domains": [
+    "devblogs.microsoft.com",
+    "learn.microsoft.com"
+  ],
+  "review_domains": [
+    "youtube.com",
+    "youtu.be"
+  ],
+  "blocked_domains": []
+}
