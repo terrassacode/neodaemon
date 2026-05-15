@@ -1,0 +1,8 @@
+{
+  "source": "Microsoft Learn",
+  "url": "https://learn.microsoft.com/en-us/fabric/fundamentals/decision-guide-lakehouse-warehouse",
+  "title": "Decision guide: choose between a lakehouse and a warehouse in Microsoft Fabric",
+  "domain": "fabric",
+  "chunk_id": "20260514_article_microsoft_fabric_decision_guide_lakehouse_warehouse.json_1",
+  "content": "T-SQL with tables, views, procedures and functions and Advanced SQL support for BI Exploring and querying delta tables from the lakehouse Staging Data and Archival Zone for analysis Medallion lakehouse architecture with zones for bronze, silver and gold analysis Pairing with Warehouse for enterprise analytics use cases Development experience Warehouse Editor with full support for T-SQL data ingestion, modeling, development, and queryingâ¯UI experiences for data ingestion, modeling, and querying Read / Write support for 1st and 3rd party tooling Lakehouse SQL analytics endpoint with limited T-SQL support for views, table valued functions, and SQL Queries UI experiences for modeling and querying Limited T-SQL support for 1st and 3rd party tooling T-SQL capabilities Full DQL, DML, and DDL T-SQL support, full transaction support Full DQL, No DML, limited DDL T-SQL Support such as SQL Views and TVFs Related content Microsoft Fabric decision guide: choose a data store"
+}

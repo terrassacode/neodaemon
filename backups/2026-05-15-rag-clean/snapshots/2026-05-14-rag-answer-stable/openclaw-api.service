@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenClaw API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/openclaw/venvs/litellm/bin/python /openclaw/api.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

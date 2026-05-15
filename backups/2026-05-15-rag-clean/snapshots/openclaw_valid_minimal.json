@@ -1,0 +1,19 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/openclaw/workspace"
+    }
+  },
+  "gateway": {
+    "bind": "loopback",
+    "port": 18789,
+    "auth": {}
+  },
+  "tools": {
+    "profile": "coding",
+    "web": {
+      "search": { "enabled": false },
+      "fetch": { "enabled": false }
+    }
+  }
+}

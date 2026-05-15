@@ -1,0 +1,275 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/openclaw/workspace",
+      "model": {
+        "primary": "openai-codex/gpt-5.5"
+      },
+      "models": {
+        "openai/gemini-flash": {
+          "alias": "gemini-flash"
+        },
+        "openai-codex/gpt-5.5": {}
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "name": "MAIN",
+        "workspace": "/openclaw/workspace/task-validator",
+        "model": {
+          "primary": "openai-codex/gpt-5.5"
+        },
+        "thinkingDefault": "medium",
+        "skills": [
+          "security-first-action-review"
+        ],
+        "tools": {
+          "allow": [
+            "read",
+            "memory_get"
+          ],
+          "exec": {
+            "security": "deny",
+            "ask": "always"
+          },
+          "fs": {
+            "workspaceOnly": true
+          }
+        },
+        "sandbox": {
+          "mode": "off",
+          "workspaceAccess": "ro"
+        },
+        "embeddedPi": {
+          "executionContract": "strict-agentic"
+        }
+      }
+    ]
+  },
+  "gateway": {
+    "mode": "local",
+    "bind": "loopback",
+    "port": 18789,
+    "auth": {
+      "mode": "token",
+      "token": "4e3cc8319bd6dcc27fb60aa005ce3be87aa0be027bfcb1e9"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "tools": {
+    "profile": "coding",
+    "web": {
+      "search": {
+        "enabled": false,
+        "provider": "duckduckgo"
+      },
+      "fetch": {
+        "enabled": false
+      }
+    },
+    "alsoAllow": [
+      "browser"
+    ]
+  },
+  "skills": {
+    "entries": {
+      "1password": {
+        "enabled": false
+      },
+      "apple-notes": {
+        "enabled": false
+      },
+      "apple-reminders": {
+        "enabled": false
+      },
+      "bear-notes": {
+        "enabled": false
+      },
+      "blogwatcher": {
+        "enabled": false
+      },
+      "blucli": {
+        "enabled": false
+      },
+      "bluebubbles": {
+        "enabled": false
+      },
+      "camsnap": {
+        "enabled": false
+      },
+      "clawhub": {
+        "enabled": false
+      },
+      "coding-agent": {
+        "enabled": false
+      },
+      "discord": {
+        "enabled": false
+      },
+      "eightctl": {
+        "enabled": false
+      },
+      "gemini": {
+        "enabled": false
+      },
+      "gh-issues": {
+        "enabled": false
+      },
+      "gifgrep": {
+        "enabled": false
+      },
+      "github": {
+        "enabled": false
+      },
+      "gog": {
+        "enabled": false
+      },
+      "goplaces": {
+        "enabled": false
+      },
+      "himalaya": {
+        "enabled": false
+      },
+      "imsg": {
+        "enabled": false
+      },
+      "mcporter": {
+        "enabled": false
+      },
+      "model-usage": {
+        "enabled": false
+      },
+      "nano-pdf": {
+        "enabled": false
+      },
+      "notion": {
+        "enabled": false
+      },
+      "obsidian": {
+        "enabled": false
+      },
+      "openai-whisper": {
+        "enabled": false
+      },
+      "openai-whisper-api": {
+        "enabled": false
+      },
+      "openhue": {
+        "enabled": false
+      },
+      "oracle": {
+        "enabled": false
+      },
+      "ordercli": {
+        "enabled": false
+      },
+      "peekaboo": {
+        "enabled": false
+      },
+      "sag": {
+        "enabled": false
+      },
+      "session-logs": {
+        "enabled": false
+      },
+      "sherpa-onnx-tts": {
+        "enabled": false
+      },
+      "slack": {
+        "enabled": false
+      },
+      "songsee": {
+        "enabled": false
+      },
+      "sonoscli": {
+        "enabled": false
+      },
+      "spotify-player": {
+        "enabled": false
+      },
+      "summarize": {
+        "enabled": false
+      },
+      "things-mac": {
+        "enabled": false
+      },
+      "tmux": {
+        "enabled": false
+      },
+      "trello": {
+        "enabled": false
+      },
+      "video-frames": {
+        "enabled": false
+      },
+      "voice-call": {
+        "enabled": false
+      },
+      "wacli": {
+        "enabled": false
+      },
+      "xurl": {
+        "enabled": false
+      }
+    }
+  },
+  "wizard": {
+    "lastRunAt": "2026-05-09T14:27:15.050Z",
+    "lastRunVersion": "2026.5.7",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.5.7",
+    "lastTouchedAt": "2026-05-11T09:23:03.828Z"
+  },
+  "plugins": {
+    "entries": {
+      "openai": {
+        "enabled": true
+      },
+      "telegram": {
+        "enabled": true
+      },
+      "duckduckgo": {},
+      "browser": {
+        "enabled": true
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "dmPolicy": "allowlist",
+      "enabled": true,
+      "allowFrom": [
+        "8785888003"
+      ],
+      "groups": {
+        "*": {
+          "requireMention": true
+        }
+      },
+      "botToken": "8744355669:AAHGITemIKjxSDZ1fzVUlh4LtKQ0GOcHPLc"
+    }
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "auth": {
+    "profiles": {
+      "openai-codex:albertcat1974@outlook.es": {
+        "provider": "openai-codex",
+        "mode": "oauth",
+        "email": "albertcat1974@outlook.es"
+      }
+    }
+  },
+  "browser": {
+    "enabled": true,
+    "defaultProfile": "openclaw"
+  }
+}

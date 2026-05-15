@@ -1,0 +1,55 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/openclaw/workspace",
+      "model": {
+        "primary": "openai/gemini-flash"
+      }
+    }
+  },
+
+  "gateway": {
+    "mode": "local",
+    "bind": "loopback",
+    "port": 18789,
+    "auth": {
+      "mode": "token",
+      "token": "4e3cc8319bd6dcc27fb60aa005ce3be87aa0be027bfcb1e9"
+    }
+  },
+
+  "tools": {
+    "profile": "coding",
+    "web": {
+      "search": {
+        "enabled": false
+      },
+      "fetch": {
+        "enabled": false
+      }
+    }
+  },
+
+  "skills": {
+    "entries": {
+      "1password": {
+        "enabled": false
+      },
+      "apple-notes": {
+        "enabled": false
+      },
+      "apple-reminders": {
+        "enabled": false
+      },
+      "bear-notes": {
+        "enabled": false
+      }
+    }
+  },
+  "models": "openai/gemini-flash"
+    }
+  
+ 
+ 
+  
+

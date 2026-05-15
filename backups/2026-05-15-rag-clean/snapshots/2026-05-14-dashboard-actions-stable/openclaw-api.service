@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenClaw API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /openclaw/api.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
