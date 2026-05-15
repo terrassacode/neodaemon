@@ -2,9 +2,10 @@ import json
 import time
 import requests
 from urllib.parse import quote
+from main_handler import ask_main
 
 CONFIG = "/home/openclaw/.openclaw/openclaw.json"
-API_URL = "http://127.0.0.1:5000/rag-ask"
+API_URL = "http://127.0.0.1:5001/rag-ask"
 API_TOKEN = "neodaemon-secure-token"
 
 with open(CONFIG) as f:
@@ -73,6 +74,15 @@ def main():
 
                 if ALLOW_FROM and user_id not in ALLOW_FROM:
                     send_message(chat_id, "No autorizado.")
+                    continue
+
+                if text.lower().startswith("/main"):
+                    question = text[5:].strip()
+                    if not question:
+                        send_message(chat_id, "Uso: /main tu mensaje")
+                        continue
+                    answer = ask_main(question)
+                    send_message(chat_id, answer)
                     continue
 
                 if text.startswith("/start"):

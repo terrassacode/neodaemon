@@ -10,6 +10,12 @@ API_TOKEN = "neodaemon-secure-token"
 def clean_ansi(text):
     return re.sub(r'\x1B\[[0-?]*[ -/]*[@-~]', '', text)
 
+def clean_text(text):
+    # elimina repeticiones simples tipo "hola hola"
+    text = re.sub(r'\b(\w+)\s+\1\b', r'\1', text)
+    text = re.sub(r'(\w{4,})\1+', r'\1', text)
+    return text.strip()
+
 def ask_llm(question):
     chunks = load_chunks()
     results = retrieve_chunks(chunks, question, top_k=5)
@@ -18,14 +24,24 @@ def ask_llm(question):
         return {
             "answer": "No se encontró contexto relevante.",
             "confidence": "low",
+            "score_max": 0,
             "sources": []
         }
 
     context = "\n\n".join([r["text"] for r in results[:3]])
+    intent = detect_intent(question)
 
+    # Prompt más estricto
     prompt = f"""Eres experto en Microsoft Fabric.
 
-Usa SOLO el contexto para responder.
+REGLAS:
+- Usa SOLO la información del contexto
+- No inventes información
+- Si no está en el contexto, dilo claramente
+- Responde en español
+- Sé claro y estructurado (bullets si aplica)
+
+Tipo de pregunta: {intent}
 
 Contexto:
 {context}
@@ -33,23 +49,26 @@ Contexto:
 Pregunta:
 {question}
 
-Respuesta clara y técnica:"""
+Respuesta:"""
 
     try:
         result = subprocess.run(
-            ["ollama", "run", "llama3.2:3b"],
+            ["ollama", "run", "llama3.2:3b", "--nowordwrap"],
             input=prompt,
             capture_output=True,
             text=True,
             timeout=240
         )
 
-        raw_answer = result.stdout.strip()
-        answer = clean_ansi(raw_answer)
+        raw = result.stdout.strip()
+        answer = clean_text(clean_ansi(raw))
+
+        score_max = results[0]["score"] if results else 0
 
         return {
             "answer": answer,
-            "confidence": "high" if results[0]["score"] > 0.3 else "medium",
+            "confidence": "high" if score_max > 0.5 else "medium",
+            "score_max": score_max,
             "sources": [
                 {
                     "score": r["score"],
@@ -64,6 +83,7 @@ Respuesta clara y técnica:"""
         return {
             "answer": f"Error LLM: {e}",
             "confidence": "low",
+            "score_max": 0,
             "sources": []
         }
 
