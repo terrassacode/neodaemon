@@ -2,50 +2,75 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from rag_loader import load_chunks
 from rag_retriever import retrieve_chunks
-import urllib.parse, subprocess
-from pathlib import Path
+from rag_intent import detect_intent
+import urllib.parse, subprocess, re
 
 API_TOKEN = "neodaemon-secure-token"
-CHUNKS_DIR = "/openclaw/workspace/main/rag_store/chunks"
 
-
-
-def rank_chunks(chunks, query):
-    query = query.lower()
-    scored = []
-    for c in chunks:
-        score = sum(1 for w in query.split() if w in c.lower())
-        scored.append((score, c))
-    return [c for score, c in sorted(scored, reverse=True)[:5] if score > 0]
+def clean_ansi(text):
+    return re.sub(r'\x1B\[[0-?]*[ -/]*[@-~]', '', text)
 
 def ask_llm(question):
     chunks = load_chunks()
     results = retrieve_chunks(chunks, question, top_k=5)
+
+    if not results:
+        return {
+            "answer": "No se encontró contexto relevante.",
+            "confidence": "low",
+            "sources": []
+        }
+
     context = "\n\n".join([r["text"] for r in results[:3]])
 
-    prompt = f"""Contexto:
+    prompt = f"""Eres experto en Microsoft Fabric.
+
+Usa SOLO el contexto para responder.
+
+Contexto:
 {context}
 
 Pregunta:
 {question}
 
-Respuesta:"""
+Respuesta clara y técnica:"""
 
     try:
         result = subprocess.run(
-            ["ollama", "run", "llama3.2:3b", "--nowordwrap"],
+            ["ollama", "run", "llama3.2:3b"],
             input=prompt,
             capture_output=True,
             text=True,
             timeout=240
         )
-        return result.stdout.strip()
+
+        raw_answer = result.stdout.strip()
+        answer = clean_ansi(raw_answer)
+
+        return {
+            "answer": answer,
+            "confidence": "high" if results[0]["score"] > 0.3 else "medium",
+            "sources": [
+                {
+                    "score": r["score"],
+                    "url": r.get("url"),
+                    "chunk_id": r.get("chunk_id")
+                }
+                for r in results[:3]
+            ]
+        }
+
     except Exception as e:
-        return f"Error LLM: {e}"
+        return {
+            "answer": f"Error LLM: {e}",
+            "confidence": "low",
+            "sources": []
+        }
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+
         if parsed.path != "/rag-ask":
             self.send_response(404)
             self.end_headers()
@@ -60,22 +85,16 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        answer = ask_llm(question)
-
-        resp = {
-            "answer": answer,
-            "confidence": "low",
-            "score_max": 0
-        }
+        result = ask_llm(question)
 
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
         self.end_headers()
-        self.wfile.write(json.dumps(resp).encode())
+        self.wfile.write(json.dumps(result).encode())
 
 def main():
     server = HTTPServer(("127.0.0.1", 5001), Handler)
-    print("API running on 5001")
+    print("API v2 running on 5001")
     server.serve_forever()
 
 if __name__ == "__main__":
