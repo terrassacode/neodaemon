@@ -240,7 +240,7 @@ class H(BaseHTTPRequestHandler):
         "score_max": float(max_score),
         "sources": []
     }), "application/json")
-            elif max_score < 0.60:
+            elif max_score < 0.90:
                 confidence = "medium"
             else:
                 confidence = "high"
