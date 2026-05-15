@@ -220,8 +220,12 @@ class H(BaseHTTPRequestHandler):
 
             if not top_chunks:
                 return send(self, 200, json.dumps({
-                    "answer": "No he encontrado contexto relevante para responder con precisión."
-                }), "application/json")
+        "answer": "No he encontrado contexto relevante para responder con precisión.",
+        "confidence": "low",
+        "score_max": 0.0,
+        "chunks_used": 0,
+        "sources": []
+    }), "application/json")
 
             context = "\n\n".join(top_chunks)
             answer = ask_llm(context, question)
@@ -230,11 +234,12 @@ class H(BaseHTTPRequestHandler):
 
             if max_score < 0.30:
                 return send(self, 200, json.dumps({
-                    "answer": "No hay suficiente contexto relevante para responder con fiabilidad.",
-                    "confidence": "low",
-                    "chunks_used": len(top_chunks),
-                    "score_max": float(max_score)
-                }), "application/json")
+        "answer": "No hay suficiente contexto relevante para responder con fiabilidad.",
+        "confidence": "low",
+        "chunks_used": len(top_chunks),
+        "score_max": float(max_score),
+        "sources": []
+    }), "application/json")
             elif max_score < 0.60:
                 confidence = "medium"
             else:
