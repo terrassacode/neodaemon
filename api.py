@@ -72,7 +72,7 @@ def embed_query(text):
     r = requests.post("http://127.0.0.1:11434/api/embeddings", json={
         "model": "nomic-embed-text",
         "prompt": text
-    }, timeout=120)
+    }, timeout=240)
     r.raise_for_status()
     return r.json()["embedding"]
 
@@ -148,10 +148,10 @@ Respuesta:
 """
     try:
         r = requests.post("http://127.0.0.1:11434/api/generate", json={
-            "model": "llama3.2:3b",
+            "model": "llama3.1:8b",
             "prompt": prompt,
             "stream": False
-        }, timeout=120)
+        }, timeout=240)
         return r.json().get("response", "").strip()
     except Exception as e:
         return "Error LLM: " + str(e)
