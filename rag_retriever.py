@@ -28,7 +28,10 @@ def bm25_rank(chunks, query, top_k=5, min_score=0.0):
                 "text": text,
                 "source": chunk.get("source", "") if isinstance(chunk, dict) else "",
                 "url": chunk.get("url", "") if isinstance(chunk, dict) else "",
-                "chunk_id": chunk.get("chunk_id", "") if isinstance(chunk, dict) else ""
+                "chunk_id": chunk.get("chunk_id", "") if isinstance(chunk, dict) else "",
+                "block_type": chunk.get("block_type", "") if isinstance(chunk, dict) else "",
+                "title": chunk.get("title", "") if isinstance(chunk, dict) else "",
+                "quality_score": chunk.get("quality_score", 0) if isinstance(chunk, dict) else 0
             })
 
     return results

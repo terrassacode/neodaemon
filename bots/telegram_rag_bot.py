@@ -211,6 +211,7 @@ def main():
 
                 answer = ask_neodaemon(question)
                 send_message(chat_id, answer)
+                continue
 
         except Exception as e:
             print("ERROR:", e)

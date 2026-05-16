@@ -136,6 +136,8 @@ for f in APPROVED.glob("*.json"):
             "category": d.get("category"),
             "rank_score": d.get("rank_score"),
             "status": "processed_text",
+            "raw_html": html[:200000],
+            "clean_text": text[:50000],
             "text": text[:50000]
         }
 

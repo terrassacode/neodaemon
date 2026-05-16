@@ -1,5 +1,6 @@
 import subprocess
 import json
+import requests
 from pathlib import Path
 
 IDENTITY = Path("/openclaw/bots/neodaemon_identity.txt").read_text()
@@ -19,7 +20,33 @@ def find_key(obj, key):
                 return found
     return None
 
+
+def ask_rag(question):
+    try:
+        r = requests.get(
+            "http://127.0.0.1:5001/rag-ask",
+            params={
+                "q": question,
+                "token": "neodaemon-secure-token"
+            },
+            timeout=10
+        )
+        data = r.json()
+
+        if data.get("sources"):
+            return data.get("answer", "Sin respuesta RAG")
+
+        return None
+
+    except Exception:
+        return None
+
 def ask_main(question):
+    # intento RAG primero
+    rag_answer = ask_rag(question)
+    if rag_answer:
+        return rag_answer
+
     message = f"""{IDENTITY}
 
 Mensaje de Albert:
