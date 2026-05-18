@@ -3,6 +3,9 @@ import time
 import requests
 from urllib.parse import quote
 from main_handler import ask_main
+from dotenv import load_dotenv
+import os
+load_dotenv("/openclaw/.env")
 
 CONFIG = "/home/openclaw/.openclaw/openclaw.json"
 API_URL = "http://127.0.0.1:5001/rag-ask"
@@ -12,7 +15,9 @@ with open(CONFIG) as f:
     cfg = json.load(f)
 
 tg = cfg["channels"]["telegram"]
-BOT_TOKEN = tg["botToken"]
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not BOT_TOKEN:
+    raise RuntimeError("Falta TELEGRAM_BOT_TOKEN en /openclaw/.env")
 ALLOW_FROM = set(str(x) for x in tg.get("allowFrom", []))
 
 BASE = f"https://api.telegram.org/bot{BOT_TOKEN}"
@@ -211,7 +216,6 @@ def main():
 
                 answer = ask_neodaemon(question)
                 send_message(chat_id, answer)
-                continue
 
         except Exception as e:
             print("ERROR:", e)
