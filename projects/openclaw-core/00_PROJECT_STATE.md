@@ -141,6 +141,12 @@ Alertas = sistema nervioso
 Telegram = canal de comunicación
 ```
 
+## Matriz operativa inicial
+
+| Componente | Estado | Qué funciona | Qué no funciona / límites | Dudas abiertas | Siguiente acción |
+|---|---|---|---|---|---|
+| MAIN | Operativo en modo prudente / bootstrap estable | Responde a Albert; mantiene identidad Neodaemon v2; usa memoria operativa; aplica TASK_VALIDATOR; coordina cambios dentro de `/openclaw/workspace/main`; crea/edita documentación, scripts y units preparadas; respeta límites sensibles | No tiene ejecución shell directa en esta sesión; no puede validar `systemctl`, `journalctl` ni comandos host; no puede leer fuera del sandbox si la ruta escapa del workspace autorizado; no puede forzar `sendDocument` por Telegram | Qué automatizaciones están activas en host frente a solo preparadas; estado real de `telegram-rag.service`; si dashboard web está activado o solo preparado; si alertas deben pasar de dry-run a envío real; la antigua hipótesis `botToken` queda marcada como no vigente salvo nueva evidencia | Auditar estado real desde host con comandos controlados y registrar resultados sin secretos |
+
 ## Restricciones operativas
 
 - No tocar gateway, routing, modelos ni configuración sensible sin permiso explícito.
@@ -148,4 +154,4 @@ Telegram = canal de comunicación
 - Si una acción no puede validarse por sandbox, debe marcarse como bloqueo o pendiente de validación externa.
 
 ## Siguiente paso
-- Convertir la prioridad operativa en una matriz: componente, estado, criticidad, validación y siguiente acción.
+- Completar matriz operativa para Alertas y Telegram.
