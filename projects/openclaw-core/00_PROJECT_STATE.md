@@ -22,14 +22,14 @@ Gestionar el núcleo del sistema OpenClaw: despliegue, servicios base y arquitec
 ### NO incluye
 - RAG avanzado
 - Telegram bot
-- dashboard visual
+- dashboard visual avanzado
 - modelos IA
 - análisis OSINT
 
 ## Estado actual
-- Sistema OpenClaw operativo en VM
-- Acceso SSH validado
-- Sistema de contexto externo funcionando con GitHub
+- Sistema OpenClaw operativo en VM.
+- Acceso SSH validado.
+- Sistema de contexto externo funcionando con GitHub.
 - Telegram/RAG no está bloqueado por la antigua hipótesis de botToken; se usa otro sistema de autenticación que no debe documentarse aquí con secretos.
 
 ## Flujo operativo principal
@@ -49,6 +49,74 @@ Albert -> Neodaemon/MAIN -> validación -> ejecución/consulta -> verificación 
 7. Neodaemon responde con lo hecho, lo validado, lo pendiente y los bloqueos.
 8. Si hay subagentes, MAIN mantiene control y síntesis final.
 
+## Subcomponentes reales actuales
+
+### Albert
+- Origen de órdenes, autorizaciones y decisiones finales.
+
+### Neodaemon/MAIN
+- Agente principal.
+- Interpreta, coordina, valida, ejecuta dentro de límites y responde.
+
+### TASK_VALIDATOR
+- Capa/protocolo de evaluación de riesgo.
+- Genera veredicto humano y JSON antes de actuar.
+- Decide si se puede ejecutar, pedir autorización o bloquear.
+
+### Workspace
+- Ruta principal: `/openclaw/workspace/main`.
+- Zona principal para documentación, scripts, dashboards y unidades preparadas.
+
+### Memoria operativa local
+- `MEMORY.md`
+- `AGENTS.md`
+- `SOUL.md`
+- `USER.md`
+- Guardan identidad, reglas, preferencias y estado operativo.
+
+### Sistema de briefings
+- `scripts/generate_daily_briefing.sh`
+- `briefings/YYYY/MM/DD/briefing.md`
+- `briefingDD_MM_YYYY.pdf`
+- Logs en `logs/briefings/...`.
+
+### Sistema de alertas
+- `scripts/check_operational_alerts.sh`
+- `alerts/alert.txt`
+- Units preparadas:
+  - `openclaw-operational-alerts.service`
+  - `openclaw-operational-alerts.timer`
+
+### Dashboard CLI
+- `scripts/status_dashboard.sh`
+
+### Dashboard HTML
+- `dashboard/status.html`
+- `scripts/generate_status_dashboard_html.sh`
+- Units preparadas:
+  - `openclaw-dashboard-html.service`
+  - `openclaw-dashboard-html.timer`
+
+### Dashboard web local preparado
+- `openclaw-dashboard-web.service`
+- Sirve por Tailscale en `100.117.135.114:8090` si se activa desde host.
+
+### Telegram/RAG externos
+- `telegram-rag.service`
+- `openclaw-rag-v2.service`
+- Monitorización parcial mediante logs/alertas.
+- No se deben tocar sin autorización explícita.
+
+### Systemd user
+- Capa de automatización preparada o activada desde host.
+- Neodaemon prepara units; la activación real queda controlada.
+
+### Herramientas disponibles en esta sesión
+- Lectura/escritura de archivos.
+- Patches.
+- Memoria.
+- Sin ejecución shell directa ahora mismo.
+
 ## Restricciones operativas
 
 - No tocar gateway, routing, modelos ni configuración sensible sin permiso explícito.
@@ -56,4 +124,4 @@ Albert -> Neodaemon/MAIN -> validación -> ejecución/consulta -> verificación 
 - Si una acción no puede validarse por sandbox, debe marcarse como bloqueo o pendiente de validación externa.
 
 ## Siguiente paso
-- Definir subcomponentes internos del core: MAIN, TASK_VALIDATOR, gateway, API base, servicios systemd, seguridad, logs y health checks.
+- Convertir esta lista en una matriz operativa: componente, estado, criticidad, validación y siguiente acción.
