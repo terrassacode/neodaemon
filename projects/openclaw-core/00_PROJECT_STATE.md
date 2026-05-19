@@ -117,6 +117,30 @@ Albert -> Neodaemon/MAIN -> validación -> ejecución/consulta -> verificación 
 - Memoria.
 - Sin ejecución shell directa ahora mismo.
 
+## Prioridad operativa actual
+
+1. MAIN
+   - Cerebro operativo del sistema.
+   - Sin MAIN no hay coordinación, memoria operativa, validación, síntesis ni control de seguridad.
+
+2. Alertas
+   - Primera capa de vigilancia operativa.
+   - Detectan señales de fallo antes de que Albert tenga que revisar logs manualmente.
+   - Están en fase prudente, dry-run o refinamiento.
+
+3. Telegram
+   - Canal humano principal.
+   - Debe servir para interacción, alertas y briefings.
+   - Queda por debajo de MAIN y Alertas porque sin cerebro operativo ni vigilancia calibrada Telegram sería solo transporte.
+
+Resumen conceptual:
+
+```text
+MAIN = cerebro operativo
+Alertas = sistema nervioso
+Telegram = canal de comunicación
+```
+
 ## Restricciones operativas
 
 - No tocar gateway, routing, modelos ni configuración sensible sin permiso explícito.
@@ -124,4 +148,4 @@ Albert -> Neodaemon/MAIN -> validación -> ejecución/consulta -> verificación 
 - Si una acción no puede validarse por sandbox, debe marcarse como bloqueo o pendiente de validación externa.
 
 ## Siguiente paso
-- Convertir esta lista en una matriz operativa: componente, estado, criticidad, validación y siguiente acción.
+- Convertir la prioridad operativa en una matriz: componente, estado, criticidad, validación y siguiente acción.
