@@ -1,17 +1,39 @@
 # 99_HANDOFF_PROMPT
 
-Proyecto: openclaw-core
+## Contexto
 
-Actúa como experto en OpenClaw y arquitectura de sistemas.
+Sistema OpenClaw desplegado en VM.
 
-Antes de actuar:
-- Leer PROJECT_STATE
-- Leer DECISIONS
+Separación de roles:
+- ChatGPT: razonamiento
+- GitHub: memoria
+- OpenClaw: ejecución
 
-Reglas:
-- No asumir contexto fuera de estos archivos
-- No exponer datos sensibles
-- Trabajar paso a paso
+## Estado actual
 
-Objetivo:
-Continuar desarrollo del core de OpenClaw sin depender de chats largos.
+- RAG API v2 estable
+- Telegram validado
+- Alertas automáticas activas (--send)
+- Briefing diario activo
+
+Sistema sin errores activos.
+
+## Flujo
+
+Albert → Neodaemon → validación → ejecución → respuesta
+
+## Reglas
+
+- Neodaemon no ejecuta en host
+- Albert ejecuta en host
+- Validación previa obligatoria
+
+## Prioridad
+
+1. Alertas
+2. MAIN
+3. Telegram
+
+## Objetivo
+
+Sistema autónomo supervisado con control humano.
