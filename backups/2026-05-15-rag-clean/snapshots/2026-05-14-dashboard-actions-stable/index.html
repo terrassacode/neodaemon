@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Neodaemon · Dashboard v2</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #1f2630;
+      --panel-soft: rgba(31, 38, 48, .55);
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --ok: #3fb950;
+      --warn: #d29922;
+      --border: #30363d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(88, 166, 255, .08), transparent 34vw),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    main {
+      width: 100vw;
+      max-width: none;
+      min-height: 100vh;
+      margin: 0;
+      padding: 10px 12px 16px;
+    }
+
+    header {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      letter-spacing: .01em;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.08rem;
+      color: var(--accent);
+      letter-spacing: .02em;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: .98rem;
+      color: var(--accent);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid rgba(88, 166, 255, .35);
+      background: linear-gradient(135deg, #162033 0%, rgba(31, 38, 48, .65) 70%);
+      box-shadow: 0 0 0 1px rgba(88, 166, 255, .12);
+      font-size: 1.35rem;
+    }
+
+    .subtitle, .muted, footer { color: var(--muted); }
+    .subtitle { margin: 0; }
+
+    .header-status {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(88, 166, 255, .08);
+      color: #9fc9ff;
+      border: 1px solid rgba(88, 166, 255, .45);
+      font-size: .82rem;
+      margin: 2px 3px 2px 0;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(390px, auto));
+      gap: 10px;
+      align-items: stretch;
+      width: calc(100vw - 24px);
+      max-width: none;
+      margin: 0 auto;
+    }
+
+    .dashboard-block {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .14);
+    }
+
+    .dashboard-block.tall { grid-row: span 2; }
+
+    .block-section {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      min-height: 0;
+    }
+
+    .block-section + .block-section {
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .section-title {
+      margin: 0;
+      color: var(--muted);
+      font-size: .82rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      align-items: stretch;
+    }
+
+    .block-grid.single { grid-template-columns: 1fr; }
+    .block-grid.fill { flex: 1; }
+
+    .mini-card {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .mini-card.primary {
+      background: linear-gradient(135deg, #162033 0%, rgba(31, 38, 48, .65) 70%);
+      border-color: rgba(88, 166, 255, .35);
+    }
+
+    .mini-card.full { grid-column: 1 / -1; }
+    .mini-card.compact { min-height: 96px; }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metric:last-child { border-bottom: 0; }
+    .metric span { color: var(--muted); }
+    .metric strong { color: var(--text); text-align: right; }
+
+    .pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-size: .82rem;
+      margin: 2px 3px 2px 0;
+      white-space: nowrap;
+    }
+
+    .pill.real {
+      color: #9fc9ff;
+      border-color: rgba(88, 166, 255, .45);
+      background: rgba(88, 166, 255, .08);
+    }
+
+    .pill.placeholder {
+      color: #f0d58c;
+      border-color: rgba(210, 153, 34, .45);
+      background: rgba(210, 153, 34, .08);
+    }
+
+    .pill.policy {
+      color: var(--muted);
+      border-color: var(--border);
+      background: rgba(31, 38, 48, .55);
+    }
+
+    .small { color: var(--muted); font-size: .9rem; }
+
+    .source {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    ul { padding-left: 18px; margin: 0; }
+    li { margin: 4px 0; }
+
+    code {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 5px;
+      color: var(--text);
+    }
+
+    footer {
+      margin-top: 12px;
+      font-size: .9rem;
+    }
+
+    @media (max-width: 1100px) {
+      .grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+        width: 100%;
+      }
+      .dashboard-block.tall { grid-row: auto; }
+    }
+
+    @media (max-width: 720px) {
+      main { padding: 9px; }
+      .grid { width: 100%; }
+      .block-grid { grid-template-columns: 1fr; }
+      .mini-card.full { grid-column: auto; }
+      .metric { align-items: flex-start; flex-direction: column; gap: 2px; }
+      .metric strong { text-align: left; }
+      .header-status { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⚙️</div>
+        <div>
+          <h1>Neodaemon · Dashboard v2</h1>
+          <p class="subtitle">Base limpia, local, privada y read-only · sin datos falsos</p>
+        </div>
+      </div>
+      <div class="header-status" aria-label="Estado del dashboard">
+        <a class="nav-link" href="personal/index.html">Personal</a>
+        <span class="pill real">1 métrica real</span>
+        <span class="pill policy">estático</span>
+        <span class="pill policy">sin servidor</span>
+        <span class="pill policy">sin JS dinámico</span>
+      </div>
+    </header>
+
+    <section class="grid" aria-label="Dashboard v2">
+      <div class="dashboard-block tall">
+        <h2>Control diario</h2>
+
+        <div class="block-section">
+          <h3 class="section-title">Decisiones</h3>
+          <div class="mini-card primary full">
+            <h3>Registro de decisiones</h3>
+            <p class="small">Primera métrica real conectada mediante snapshot estático desde el registro local.</p>
+            <div class="metric"><span>Decisiones registradas</span><strong>15</strong></div>
+            <div class="metric"><span>Última decisión</span><strong>2026-05-12 · Fase 0 documental Internet STRICT READ-ONLY</strong></div>
+            <div class="metric"><span>Incertidumbre de formato</span><strong>baja</strong></div>
+            <div class="source">
+              Fuente real: <code>logs/decisions.md</code><br />
+              Snapshot: <code>dashboard-v2/snapshots/decisions-summary.json</code><br />
+              Estado: <span class="pill real">real</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="block-section">
+          <h3 class="section-title">Gobernanza visual</h3>
+          <div class="block-grid fill">
+            <div class="mini-card compact">
+              <h3>Política de datos</h3>
+              <ul class="small">
+                <li>No mostrar valores inventados.</li>
+                <li>No usar ceros como ausencia de datos.</li>
+                <li>Cada métrica real necesita fuente.</li>
+              </ul>
+              <div class="source">Referencia: <code>PLACEHOLDERS_POLICY.md</code></div>
+            </div>
+            <div class="mini-card compact">
+              <h3>Estado operativo</h3>
+              <div class="metric"><span>Servidor</span><strong>no usado</strong></div>
+              <div class="metric"><span>Launcher</span><strong>no usado</strong></div>
+              <div class="metric"><span>Lógica activa</span><strong>no disponible</strong></div>
+              <span class="pill policy">read-only</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-block">
+        <h2>Salud</h2>
+        <div class="block-grid single fill">
+          <div class="mini-card primary full">
+            <h3>Salud privada</h3>
+            <p class="small">Área reservada para registros privados si Albert lo autoriza en una fase posterior.</p>
+            <div class="metric"><span>Tensión arterial</span><strong>sin registros</strong></div>
+            <div class="metric"><span>Movilidad</span><strong>sin datos</strong></div>
+            <div class="metric"><span>Hábitos</span><strong>sin datos</strong></div>
+            <div class="source">
+              Estado: <span class="pill placeholder">no_disponible</span><br />
+              Sin formularios activos. Sin localStorage. Sin interpretación médica.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-block">
+        <h2>Observabilidad</h2>
+        <div class="block-grid fill">
+          <div class="mini-card compact">
+            <h3>Tokens · último día disponible</h3>
+            <div class="metric"><span>Día</span><strong>2026-05-13</strong></div>
+            <div class="metric"><span>Total tokens</span><strong>2.77M</strong></div>
+            <div class="metric"><span>Input</span><strong>326.6k</strong></div>
+            <div class="metric"><span>Output</span><strong>39.7k</strong></div>
+            <div class="metric"><span>Cache read</span><strong>2.41M</strong></div>
+            <div class="metric"><span>Coste</span><strong>4.03</strong></div>
+            <div class="metric"><span>Entradas válidas</span><strong>85 / 285</strong></div>
+            <div class="source">
+              Fuente: <code>dashboard-v2/snapshots/tokens-daily-summary.json</code><br />
+              Incluye <code>cacheRead</code>. Solo agente <code>main</code>. Usage entries ≠ mensajes humanos.<br />
+              Estado: <span class="pill real">real</span>
+            </div>
+          </div>
+
+          <div class="mini-card compact">
+            <h3>Estabilidad</h3>
+            <div class="metric"><span>Score</span><strong>sin snapshot</strong></div>
+            <div class="metric"><span>Errores críticos</span><strong>sin fuente</strong></div>
+            <div class="metric"><span>Reinicios gateway</span><strong>sin fuente</strong></div>
+            <div class="source">
+              Fuente futura: <code>data/metrics/stability/</code><br />
+              Estado: <span class="pill placeholder">no_disponible</span>
+            </div>
+          </div>
+
+          <div class="mini-card compact full" id="last-event">
+            <h3>Último evento</h3>
+            <div class="metric"><span>Última acción</span><strong id="last_action">sin datos</strong></div>
+            <div class="metric"><span>Último estado</span><strong id="last_status">sin datos</strong></div>
+            <div class="metric"><span>Duración</span><strong><span id="last_duration">sin datos</span> ms</strong></div>
+            <div class="source">
+              Fuente: <code>data/last_event.json</code><br />
+              Estado: <span class="pill real">real</span>
+            </div>
+          </div>
+
+          <div class="mini-card compact full" id="daily-summary">
+            <h3>Resumen diario</h3>
+            <div class="metric"><span>Total</span><strong id="total">sin datos</strong></div>
+            <div class="metric"><span>Éxitos</span><strong id="success">sin datos</strong></div>
+            <div class="metric"><span>Fallos</span><strong id="fail">sin datos</strong></div>
+            <div class="metric"><span>Duración media</span><strong><span id="avg">sin datos</span> ms</strong></div>
+            <div class="source">
+              Fuente: <code>data/daily_summary.json</code><br />
+              Estado: <span class="pill real">real</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-block">
+        <h2>Sistema documental</h2>
+        <div class="block-grid fill">
+          <div class="mini-card compact">
+            <h3>Tools / plugins</h3>
+            <div class="metric"><span>Plugins</span><strong>sin auditoría</strong></div>
+            <div class="metric"><span>Tools</span><strong>sin inventario</strong></div>
+            <div class="metric"><span>Acciones</span><strong>no disponibles</strong></div>
+            <div class="source">
+              Fuente futura: <code>data/metrics/tools_plugins/</code><br />
+              Estado: <span class="pill placeholder">no_disponible</span>
+            </div>
+          </div>
+
+          <div class="mini-card compact">
+            <h3>Fuentes locales previstas</h3>
+            <ul class="small">
+              <li><code>data/metrics/</code></li>
+              <li><code>data/health/</code></li>
+              <li><code>data/snapshots/</code></li>
+              <li><code>memory/YYYY-MM-DD.md</code></li>
+            </ul>
+            <div class="source">
+              Política: <span class="pill policy">local</span> <span class="pill policy">privado</span> <span class="pill policy">read-only</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-block">
+        <h2>Acciones</h2>
+        <div class="block-grid single fill">
+          <div class="mini-card compact full">
+            <h3>API local</h3>
+            <button onclick="apiCall('/summary')">Resumen</button>
+            <button onclick="apiCall('/last-events')">Últimos eventos</button>
+            <button onclick="apiCall('/restart-dashboard')">Reiniciar dashboard</button>
+            <button onclick="apiCall('/restart-gateway')">Reiniciar gateway</button>
+            <pre id="action_result"></pre>
+            <div class="source">
+              Estado: <span class="pill real">funcional</span><br />
+              Control visual mediante <code>apiCall()</code>. Sin cambios en API ni servicios.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Dashboard v2 estático. Si un dato no tiene fuente verificable, se muestra como “sin datos”, “sin snapshot” o “no disponible”.
+    </footer>
+  </main>
+
+  <script>
+    function renderLastEventFallback() {
+      document.getElementById('last_action').textContent = 'sin datos';
+      document.getElementById('last_status').textContent = 'sin datos';
+      document.getElementById('last_duration').textContent = 'sin datos';
+    }
+
+    function renderDailySummaryFallback() {
+      document.getElementById('total').textContent = 'sin datos';
+      document.getElementById('success').textContent = 'sin datos';
+      document.getElementById('fail').textContent = 'sin datos';
+      document.getElementById('avg').textContent = 'sin datos';
+    }
+
+    function loadJson(path) {
+      return fetch(path, { cache: 'no-store' })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        });
+    }
+
+    function renderLastEvent(data) {
+      document.getElementById('last_action').textContent = data.action ?? 'sin datos';
+      document.getElementById('last_status').textContent = data.status ?? 'sin datos';
+      document.getElementById('last_duration').textContent = data.duration_ms ?? 'sin datos';
+    }
+
+    function renderDailySummary(data) {
+      document.getElementById('total').textContent = data.total ?? 'sin datos';
+      document.getElementById('success').textContent = data.success ?? 'sin datos';
+      document.getElementById('fail').textContent = data.fail ?? 'sin datos';
+      document.getElementById('avg').textContent = data.avg_duration_ms ?? 'sin datos';
+    }
+
+    function refreshDashboardData() {
+      loadJson('data/last_event.json')
+        .then(renderLastEvent)
+        .catch(error => {
+          console.error('Error cargando data/last_event.json:', error);
+          renderLastEventFallback();
+        });
+
+      loadJson('data/daily_summary.json')
+        .then(renderDailySummary)
+        .catch(error => {
+          console.error('Error cargando data/daily_summary.json:', error);
+          renderDailySummaryFallback();
+        });
+    }
+
+    refreshDashboardData();
+    setInterval(refreshDashboardData, 5000);
+
+    window.apiCall = function(endpoint) {
+      fetch('http://100.117.135.114:5000' + endpoint + '?token=neodaemon123')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('action_result').textContent = data;
+        })
+        .catch(error => {
+          document.getElementById('action_result').textContent = 'Error: ' + error;
+        });
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "lastGood": {
+    "openai-codex": "openai-codex:albertcat1974@outlook.es"
+  },
+  "usageStats": {
+    "openai-codex:albertcat1974@outlook.es": {
+      "errorCount": 0,
+      "lastUsed": 1778825319631
+    }
+  }
+}

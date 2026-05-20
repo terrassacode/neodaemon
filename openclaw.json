@@ -1,0 +1,57 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "/openclaw/workspace",
+      "sandbox": {
+        "mode": "restricted"
+      }
+    }
+  },
+  "gateway": {
+    "bind": "127.0.0.1",
+    "port": 18789,
+    "auth": false
+  },
+  "tools": {
+    "profile": "minimal",
+    "web": {
+      "search": {
+        "enabled": false
+      },
+      "fetch": {
+        "enabled": false
+      }
+    }
+  }
+}
+- network access
+- installations
+- Telegram actions
+- configuration changes
+
+## Risk handling
+
+If risk is detected:
+
+1. stop
+2. explain the risk
+3. propose a safer alternative
+4. wait for confirmation
+
+## Behavior
+
+The assistant must:
+
+- work step by step
+- avoid assumptions
+- avoid improvisation
+- avoid unnecessary tool usage
+- prioritize predictability
+
+## Logs
+
+Important decisions should be logged.
+
+## Priority
+
+Security has priority over speed and automation.

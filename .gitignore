@@ -1,0 +1,14 @@
+# entorno
+.env
+venvs/
+__pycache__/
+bots/__pycache__/
+
+# datos
+workspace/
+logs/
+
+# backups
+snapshots/
+backups/
+*.bak
