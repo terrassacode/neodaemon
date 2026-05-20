@@ -22,7 +22,7 @@ Fuente:
 Microsoft Real-Time Intelligence Operations Solution Accelerator
 ```
 
-### Resultado técnico
+### Resultado técnico inicial
 
 El endpoint `/rag-ask` respondió con HTTP 200 y devolvió respuesta JSON.
 
@@ -33,33 +33,66 @@ chunk_id: fabric_rti_operations_accelerator_001
 score: 10.04 aprox.
 ```
 
+### Ajuste posterior
+
+El chunk fue actualizado para reforzar terminología específica de soldadura:
+
+- RD
+- variabilidad RD
+- robot
+- programa
+- corriente
+- esfuerzo
+- soldadura individual como evento
+- modelo HOT
+- Eventstream
+- Eventhouse
+- KQL
+- alertas/dashboard
+
+### Validación BM25 posterior
+
+Consulta de recuperación directa, sin pasar por Ollama:
+
+```text
+RD soldadura robot programa variabilidad Eventstream Eventhouse KQL
+```
+
+Resultado:
+
+```text
+chunk_id: fabric_rti_operations_accelerator_001
+score: 29.05 aprox.
+```
+
+El chunk nuevo queda claramente como primer resultado.
+
 ### Conclusión
 
 El RAG actual sí consume nuevos archivos JSON añadidos a `rag_store/chunks_v2` sin necesidad de modificar `api_rag_v2.py` ni reiniciar servicios.
 
-### Calidad de respuesta
+La recuperación BM25 funciona correctamente para el chunk curado.
 
-Resultado mixto:
+### Problemas detectados
 
-- Recuperación: correcta.
-- Respuesta: demasiado genérica.
-- Problema detectado: el LLM generaliza hacia sensores genéricos como temperatura, aceleración o presión, en lugar de centrarse en RD, variabilidad, robot, programa, corriente y esfuerzo.
-- Ruido adicional: también recuperó chunks no relacionados de OneLake Shortcuts como segunda y tercera fuente.
+- El LLM local puede tardar demasiado en generar respuesta con preguntas largas.
+- El endpoint puede registrar HTTP 200 aunque el cliente curl haya cortado por timeout.
+- Resultados secundarios todavía incluyen ruido de OneLake Shortcuts.
+- La recuperación principal es correcta, pero conviene mejorar filtrado o reducir ruido del corpus.
 
 ### Decisión
 
 La ruta de ingestión mediante JSON chunks funciona.
 
-Antes de añadir muchas fuentes, hay que mejorar la especificidad del chunk y/o el filtrado para evitar respuestas genéricas.
+Antes de añadir muchas fuentes, hay que mantener chunks muy específicos y controlar el ruido de recuperación.
 
 ### Siguiente acción recomendada
 
-Crear chunks más explícitos y orientados a soldadura:
+No tocar `api_rag_v2.py` todavía.
 
-- mencionar RD varias veces;
-- incluir variabilidad de RD;
-- incluir robot/programa;
-- evitar vocabulario genérico de sensores si no aplica;
-- separar arquitectura Fabric de lógica industrial.
+Siguiente mejora segura:
 
-Después repetir la prueba con una pregunta controlada.
+- crear más chunks curados solo si pasan criterios de curación;
+- evitar contenido genérico;
+- considerar en el futuro filtrado por `source`, `quality_score` o `block_type`;
+- revisar latencia de Ollama como tarea separada.
