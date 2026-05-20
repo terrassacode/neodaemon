@@ -290,6 +290,27 @@ Operational rules:
 
 ---
 
+## Pilot guardrail chunks
+
+Pilot guardrail chunks are small pilot chunks designed to prevent RAG errors before expanding the knowledge base.
+
+They do not expand technical knowledge without control. Their role is to constrain unsafe answers, clarify limits and prevent overconfident interpretation.
+
+Rules:
+
+- Use one risk per chunk.
+- `text` and `content` are mandatory.
+- `text` and `content` must contain the same main content.
+- Use `validation = B`.
+- Use `status = review`.
+- `keywords` and `query_patterns` must be embedded inside `text` or `content`, not only stored as JSON fields.
+- `risk_note` is mandatory.
+- Do not create C or D chunks inside `chunks_v2`.
+- Validate JSON and BM25 before creating more chunks.
+- Do not create batches until the pilot chunk is approved.
+
+---
+
 ## 11. Transversal rules
 
 These rules apply to all chunks regardless of topic.
