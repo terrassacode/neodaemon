@@ -14,6 +14,10 @@ fi
 
 mkdir -p "$LOG_DIR"
 
+sanitize() {
+  sed -E 's/token=[^& ]+/token=<REDACTED>/g'
+}
+
 run_check() {
   echo "STATUS=START"
   echo "SCRIPT=$SCRIPT"
@@ -31,20 +35,20 @@ run_check() {
   echo "SERVICE_SUBSTATE=${SUB_STATE:-unknown}"
   echo "SERVICE_MAINPID=${MAIN_PID:-unknown}"
 
-  RECENT_ERRORS=$(journalctl --user -u "$SERVICE" -n 80 --no-pager 2>/dev/null | grep -Ei "error|failed|traceback|exception" | tail -n 10 || true)
+  RECENT_ERRORS=$(journalctl --user -u "$SERVICE" -n 80 --no-pager 2>/dev/null | grep -Ei "error|failed|traceback|exception|brokenpipe" | sanitize | tail -n 10 || true)
   if [[ -n "$RECENT_ERRORS" ]]; then
     echo "RECENT_ERRORS=present"
-    echo "--- RECENT_ERRORS_LAST_10 ---"
+    echo "--- RECENT_ERRORS_LAST_10_SANITIZED ---"
     echo "$RECENT_ERRORS"
   else
     echo "RECENT_ERRORS=none"
   fi
 
   if [[ "$VERBOSE" == "true" ]]; then
-    echo "--- STATUS_VERBOSE ---"
-    systemctl --user status "$SERVICE" --no-pager || true
-    echo "--- JOURNAL_LAST_80 ---"
-    journalctl --user -u "$SERVICE" -n 80 --no-pager || true
+    echo "--- STATUS_VERBOSE_SANITIZED ---"
+    systemctl --user status "$SERVICE" --no-pager | sanitize || true
+    echo "--- JOURNAL_LAST_80_SANITIZED ---"
+    journalctl --user -u "$SERVICE" -n 80 --no-pager | sanitize || true
   fi
 
   if [[ "$ACTIVE_STATE" == "active" ]]; then
@@ -55,7 +59,7 @@ run_check() {
     echo "RESULT=service_not_active"
   fi
 
-  echo "NEXT=Use --verbose only when full logs are needed. No changes were made."
+  echo "NEXT=Use --verbose only when sanitized full logs are needed. No changes were made."
 }
 
 run_check | tee "$LOG_FILE"
