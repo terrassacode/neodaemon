@@ -86,13 +86,52 @@ La ruta de ingestión mediante JSON chunks funciona.
 
 Antes de añadir muchas fuentes, hay que mantener chunks muy específicos y controlar el ruido de recuperación.
 
+---
+
+## 2026-05-20 — Validación segundo chunk KQL/RD
+
+### Chunk probado
+
+```text
+fabric_kql_rd_window_std_001.json
+```
+
+### Resultado
+
+JSON válido y recuperado por BM25 como primer resultado.
+
+Consulta usada:
+
+```text
+avg_RD std_RD RobotId ProgramId ventana RD inestabilidad modelo HOT
+```
+
+Resultado principal:
+
+```text
+chunk_id: fabric_kql_rd_window_std_001
+score: 49.33 aprox.
+```
+
+Segundo resultado:
+
+```text
+chunk_id: fabric_rti_operations_accelerator_001
+score: 17.21 aprox.
+```
+
+### Conclusión
+
+El segundo chunk aporta lógica operativa directa para el modelo HOT: media RD, desviación estándar RD, RobotId, ProgramId y ventana temporal.
+
+La recuperación es clara y suficientemente fuerte.
+
 ### Siguiente acción recomendada
 
-No tocar `api_rag_v2.py` todavía.
+Mantener el enfoque: pocos chunks, muy específicos y orientados a decisión.
 
-Siguiente mejora segura:
+No añadir más fuentes hasta definir si el siguiente bloque será:
 
-- crear más chunks curados solo si pasan criterios de curación;
-- evitar contenido genérico;
-- considerar en el futuro filtrado por `source`, `quality_score` o `block_type`;
-- revisar latencia de Ollama como tarea separada.
+- otro patrón KQL;
+- criterio de baseline;
+- o primer flujo diario automatizado de curación.
