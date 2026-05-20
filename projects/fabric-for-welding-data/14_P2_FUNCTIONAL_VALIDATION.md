@@ -10,12 +10,24 @@ baseline criteria -> KQL window/std pattern -> HOT architecture
 
 ---
 
-## Prueba ejecutada
+## Prueba ejecutada con wrapper
+
+Wrapper usado:
+
+```text
+scripts/rag_ops/rag_query_local.sh
+```
 
 Pregunta:
 
 ```text
-Explica brevemente como usar std_RD_actual y std_RD_baseline para vigilar inestabilidad RD por RobotId y ProgramId?
+Como comparar std_RD_actual con std_RD_baseline en soldadura?
+```
+
+La query fue codificada correctamente y el token quedó sanitizado como:
+
+```text
+token=<REDACTED>
 ```
 
 ---
@@ -26,13 +38,13 @@ Fuentes recuperadas:
 
 ```text
 1. fabric_kql_rd_baseline_criteria_001
-   score aprox: 58.03
+   score aprox: 39.43
 
 2. fabric_kql_rd_window_std_001
-   score aprox: 48.20
+   score aprox: 25.89
 
 3. fabric_rti_operations_accelerator_001
-   score aprox: 31.23
+   score aprox: 24.02
 ```
 
 Conclusión:
@@ -45,28 +57,49 @@ La recuperación RAG/BM25 es correcta.
 
 ## Resultado de respuesta
 
-La respuesta fue breve y usó el enfoque correcto:
+La respuesta fue funcionalmente mejor que en pruebas anteriores:
 
-- compara `std_RD_actual` contra `std_RD_baseline`;
-- habla de ventana temporal;
-- respeta `RobotId` y `ProgramId`;
-- no mezcla robots o programas distintos;
-- indica ajuste posterior según eventos de calidad.
+- usa los chunks correctos;
+- mantiene el enfoque de comparar `std_RD_actual` contra `std_RD_baseline`;
+- menciona ventana temporal, `RobotId` y `ProgramId`;
+- indica que el criterio debe validarse con datos reales;
+- no imprime el token;
+- no genera una query KQL larga rota.
 
 ---
 
-## Problema pendiente
+## Problemas pendientes
 
-La respuesta perdió el valor numérico del umbral:
+La respuesta todavía presenta dos problemas:
+
+### 1. Pierde el valor numérico del umbral
+
+Salida observada:
 
 ```text
-std_RD_actual > std_RD_baseline * .
+std RD_baseline * .
 ```
 
 Debe conservar:
 
 ```text
-std_RD_actual > std_RD_baseline * 1.5
+std_RD_baseline * 1.5
+```
+
+### 2. Degrada nombres técnicos
+
+Ejemplos observados:
+
+```text
+std RD actual
+std RD baseline
+```
+
+Debe conservar:
+
+```text
+std_RD_actual
+std_RD_baseline
 ```
 
 ---
@@ -79,22 +112,37 @@ P2 queda en estado:
 PARCIAL
 ```
 
-La recuperación es válida, pero la respuesta funcional todavía no cumple el criterio de conservar constantes técnicas.
+La recuperación es válida y el wrapper funciona, pero la respuesta funcional todavía no cumple el criterio de conservar constantes y nombres técnicos.
 
 ---
 
-## Hipótesis
+## Diagnóstico
 
-El problema no parece estar en BM25 ni en los chunks recuperados, sino en la generación del modelo Ollama o en cómo el contexto expone el valor `1.5`.
+El problema no está en:
+
+- el wrapper;
+- el token;
+- BM25;
+- la recuperación de chunks.
+
+El problema está en la capa de generación/postprocesado y/o en la forma en que el chunk expone literalmente la regla.
 
 ---
 
 ## Siguiente acción recomendada
 
-Antes de seguir ampliando el RAG, revisar el chunk `fabric_kql_rd_baseline_criteria_001.json` para asegurar que la regla aparece de forma explícita, repetida y fácil de recuperar literalmente:
+No ampliar el RAG todavía.
+
+Antes de cerrar P2, reforzar el chunk `fabric_kql_rd_baseline_criteria_001.json` para que incluya de forma literal y destacada:
 
 ```text
 Regla literal: std_RD_actual > std_RD_baseline * 1.5
 ```
 
-No tocar todavía servicios, tokens ni arquitectura RAG.
+También debe indicar explícitamente:
+
+```text
+No cambiar nombres técnicos como std_RD_actual o std_RD_baseline.
+```
+
+Después repetir prueba con `rag_query_local.sh`.
