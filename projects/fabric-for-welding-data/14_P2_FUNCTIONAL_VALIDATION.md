@@ -57,36 +57,65 @@ La recuperación RAG/BM25 es correcta.
 
 ## Resultado de respuesta
 
-La respuesta fue funcionalmente mejor que en pruebas anteriores:
+La prueba confirma que el wrapper funciona, pero la respuesta del modelo no cumple todavía el criterio funcional.
+
+Aspectos correctos:
 
 - usa los chunks correctos;
-- mantiene el enfoque de comparar `std_RD_actual` contra `std_RD_baseline`;
-- menciona ventana temporal, `RobotId` y `ProgramId`;
-- indica que el criterio debe validarse con datos reales;
+- conserva parcialmente el enfoque de variabilidad RD;
 - no imprime el token;
-- no genera una query KQL larga rota.
+- ejecuta la consulta mediante wrapper seguro;
+- no requiere comandos manuales largos.
 
 ---
 
 ## Problemas pendientes
-
-La respuesta todavía presenta dos problemas:
 
 ### 1. Pierde el valor numérico del umbral
 
 Salida observada:
 
 ```text
-std RD_baseline * .
+umbral determinado, por ejemplo, .
 ```
 
 Debe conservar:
 
 ```text
-std_RD_baseline * 1.5
+1.5
 ```
 
-### 2. Degrada nombres técnicos
+### 2. Inventa una métrica no curada
+
+Salida observada:
+
+```text
+RD_factor = (std_RD_actual / dispersion esperada)
+```
+
+Problema:
+
+```text
+RD_factor no forma parte del criterio curado actual.
+```
+
+### 3. Genera KQL no curado
+
+Salida observada:
+
+```text
+SpotWeldEvents | where Timestamp > ago(h)
+...
+bin(Timestamp, m)
+```
+
+Problema:
+
+```text
+El modelo está generando código incompleto o no validado.
+```
+
+### 4. Degrada nombres técnicos
 
 Ejemplos observados:
 
@@ -109,10 +138,10 @@ std_RD_baseline
 P2 queda en estado:
 
 ```text
-PARCIAL
+NO CERRADO
 ```
 
-La recuperación es válida y el wrapper funciona, pero la respuesta funcional todavía no cumple el criterio de conservar constantes y nombres técnicos.
+La recuperación es válida y el wrapper funciona, pero la respuesta funcional no es aceptable para cierre.
 
 ---
 
@@ -125,7 +154,7 @@ El problema no está en:
 - BM25;
 - la recuperación de chunks.
 
-El problema está en la capa de generación/postprocesado y/o en la forma en que el chunk expone literalmente la regla.
+El problema está en la capa de generación y/o en que el chunk no fuerza suficientemente una respuesta literal cerrada.
 
 ---
 
@@ -133,16 +162,21 @@ El problema está en la capa de generación/postprocesado y/o en la forma en que
 
 No ampliar el RAG todavía.
 
-Antes de cerrar P2, reforzar el chunk `fabric_kql_rd_baseline_criteria_001.json` para que incluya de forma literal y destacada:
+Crear o reforzar un chunk de criterio cerrado que indique explícitamente:
 
 ```text
-Regla literal: std_RD_actual > std_RD_baseline * 1.5
+Respuesta esperada corta:
+Comparar std_RD_actual contra std_RD_baseline por RobotId + ProgramId.
+Regla literal: std_RD_actual > std_RD_baseline * 1.5.
+El valor 1.5 es provisional y debe validarse con datos reales.
+No inventar RD_factor.
+No generar KQL si no está curado.
+No cambiar nombres técnicos.
 ```
 
-También debe indicar explícitamente:
+Después repetir prueba con:
 
 ```text
-No cambiar nombres técnicos como std_RD_actual o std_RD_baseline.
+rag_test_bm25.sh
+rag_query_local.sh
 ```
-
-Después repetir prueba con `rag_query_local.sh`.
