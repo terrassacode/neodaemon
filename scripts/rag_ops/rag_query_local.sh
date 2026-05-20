@@ -8,6 +8,7 @@ LOG_FILE="$LOG_DIR/$(date +%F_%H%M%S)_${SCRIPT}.log"
 API_FILE="/openclaw/api_rag_v2.py"
 URL_BASE="http://127.0.0.1:5001/rag-ask"
 MAX_TIME="300"
+PYTHON_BIN="/openclaw/venvs/litellm/bin/python"
 
 QUERY="${*:-}"
 
@@ -18,10 +19,10 @@ sanitize() {
 }
 
 urlencode() {
-  /openclaw/venvs/litellm/bin/python - <<'PY'
-import sys
+  QUERY_TO_ENCODE="$1" "$PYTHON_BIN" - <<'PY'
+import os
 from urllib.parse import quote
-print(quote(sys.stdin.read().strip()))
+print(quote(os.environ.get("QUERY_TO_ENCODE", "")))
 PY
 }
 
@@ -36,6 +37,14 @@ run_check() {
     echo "ERROR=query_required"
     echo "RESULT=rag_query_not_run"
     echo "NEXT=Pass a query argument."
+    return 1
+  fi
+
+  if [ ! -x "$PYTHON_BIN" ]; then
+    echo "STATUS=ERROR"
+    echo "ERROR=python_bin_not_found"
+    echo "RESULT=rag_query_not_run"
+    echo "NEXT=Verify venv path."
     return 1
   fi
 
@@ -56,7 +65,15 @@ run_check() {
     return 1
   fi
 
-  ENCODED_QUERY=$(printf '%s' "$QUERY" | urlencode)
+  ENCODED_QUERY=$(urlencode "$QUERY")
+
+  if [[ -z "$ENCODED_QUERY" ]]; then
+    echo "STATUS=ERROR"
+    echo "ERROR=query_encoding_failed"
+    echo "RESULT=rag_query_not_run"
+    echo "NEXT=Check query encoding function."
+    return 1
+  fi
 
   echo "QUERY=$QUERY"
   echo "URL=$URL_BASE?q=$ENCODED_QUERY&token=<REDACTED>"
