@@ -263,11 +263,38 @@ If uncertainty exists, use:
 
 ---
 
-## 10. Transversal rules
+## 10. Operational loader compatibility
+
+Operational P2B chunks must respect the current RAG loader contract.
+
+Confirmed current behaviour:
+
+- The loader reads JSON chunks from `/openclaw/workspace/main/rag_store/chunks_v2`.
+- The loader reads `text` or `content`.
+- If both fields exist, `text` has priority.
+- The loader preserves `source`, `url` and `chunk_id`.
+- The retriever may return `block_type`, `title` and `quality_score`.
+- `keywords`, `query_patterns`, `validation`, `status`, `applicability` and `risk_note` are not directly used by BM25 when they exist only as JSON fields.
+- For BM25 to use `keywords` or `query_patterns`, they must also be embedded inside `text` or `content` in readable form.
+- `load_chunks()` is called on each question; no cache is currently confirmed.
+
+Operational rules:
+
+1. Every operational P2B chunk must include both `text` and `content`.
+2. `text` and `content` must contain the same main content.
+3. `keywords` and `query_patterns` should remain as structured fields, but must also be written inside `text` or `content` in readable form.
+4. `validation`, `status`, `applicability` and `risk_note` are human-control metadata, not active filters in the current loader.
+5. Do not create C or D chunks inside `chunks_v2`.
+6. Do not assume that `quality_score` filters retrieval results.
+7. If filtering by `validation` or `status` becomes required, it must be implemented explicitly before relying on it.
+
+---
+
+## 11. Transversal rules
 
 These rules apply to all chunks regardless of topic.
 
-### 10.1 Do not overclaim RD
+### 11.1 Do not overclaim RD
 
 RD is a process signal, not a standalone proof of final weld quality.
 
@@ -283,7 +310,7 @@ Forbidden:
 - RD alone confirms weld quality.
 - A single RD threshold is universal.
 
-### 10.2 Preserve technical names
+### 11.2 Preserve technical names
 
 Do not rename validated variables.
 
@@ -302,7 +329,7 @@ Forbidden:
 - replacing `std_RD_actual` with vague names like “current deviation factor”
 - changing baseline variable names without a curated mapping
 
-### 10.3 Do not invent KQL
+### 11.3 Do not invent KQL
 
 KQL can be included only when the query is curated or explicitly marked as illustrative.
 
@@ -313,7 +340,7 @@ If there is no curated query:
 - do not invent column names;
 - do not invent thresholds.
 
-### 10.4 Keep robot/program separation
+### 11.4 Keep robot/program separation
 
 Do not mix robots or programs when defining baselines unless the chunk explicitly validates that aggregation.
 
@@ -331,7 +358,7 @@ RobotId + ProgramId + ID_SW
 
 Use `ID_SW` only if traceability is reliable enough.
 
-### 10.5 Mark provisional thresholds
+### 11.5 Mark provisional thresholds
 
 Any threshold not validated with real production data must be marked as provisional.
 
@@ -343,7 +370,7 @@ std_RD_actual > std_RD_baseline * 1.5
 
 This is an initial criterion to validate with real data, not a fixed universal truth.
 
-### 10.6 Separate monitoring from prediction
+### 11.6 Separate monitoring from prediction
 
 A stability rule is not a nugget prediction model.
 
@@ -357,7 +384,7 @@ Forbidden:
 - “This predicts nugget.”
 - “This guarantees weld quality.”
 
-### 10.7 Keep answers short and grounded
+### 11.7 Keep answers short and grounded
 
 Chunks should help the RAG answer briefly, technically and with source discipline.
 
@@ -370,7 +397,7 @@ Avoid:
 
 ---
 
-## 11. Final guardrails before PDF extraction
+## 12. Final guardrails before PDF extraction
 
 Before extracting PDFs or generating chunks at scale, verify:
 
@@ -386,12 +413,14 @@ Before extracting PDFs or generating chunks at scale, verify:
 10. C and D chunks are not used for direct RAG answers.
 11. No tokens, credentials, internal secrets or sensitive plant data are included.
 12. A small pilot batch must be reviewed before any massive chunk generation.
+13. P2B chunks must include both `text` and `content` with the same main content.
+14. Retrieval keywords and query patterns must be present inside `text` or `content`, not only as JSON fields.
 
 If any guardrail fails, stop extraction and quarantine the affected material.
 
 ---
 
-## 12. Minimal approved example
+## 13. Minimal approved example
 
 ```json
 {
@@ -399,7 +428,8 @@ If any guardrail fails, stop extraction and quarantine the affected material.
   "topic": "resistencia_dinamica",
   "subtopic": "baseline_estabilidad",
   "title": "Comparación de std_RD_actual contra std_RD_baseline",
-  "content": "Para vigilancia de estabilidad del proceso, comparar std_RD_actual contra std_RD_baseline por RobotId + ProgramId. Una regla inicial es std_RD_actual > std_RD_baseline * 1.5, pero el factor 1.5 es provisional y debe validarse con datos reales. Esta regla no predice nugget; sirve como capa previa de vigilancia.",
+  "text": "Para vigilancia de estabilidad del proceso, comparar std_RD_actual contra std_RD_baseline por RobotId + ProgramId. Una regla inicial es std_RD_actual > std_RD_baseline * 1.5, pero el factor 1.5 es provisional y debe validarse con datos reales. Esta regla no predice nugget; sirve como capa previa de vigilancia. Keywords: std_RD_actual, std_RD_baseline, RobotId, ProgramId, RD, baseline. Query patterns: comparar std_RD_actual con std_RD_baseline; baseline RD por robot y programa; regla 1.5 RD.",
+  "content": "Para vigilancia de estabilidad del proceso, comparar std_RD_actual contra std_RD_baseline por RobotId + ProgramId. Una regla inicial es std_RD_actual > std_RD_baseline * 1.5, pero el factor 1.5 es provisional y debe validarse con datos reales. Esta regla no predice nugget; sirve como capa previa de vigilancia. Keywords: std_RD_actual, std_RD_baseline, RobotId, ProgramId, RD, baseline. Query patterns: comparar std_RD_actual con std_RD_baseline; baseline RD por robot y programa; regla 1.5 RD.",
   "keywords": ["std_RD_actual", "std_RD_baseline", "RobotId", "ProgramId", "RD", "baseline"],
   "query_patterns": ["comparar std_RD_actual con std_RD_baseline", "baseline RD por robot y programa", "regla 1.5 RD"],
   "source": "internal_rules",
@@ -416,6 +446,6 @@ If any guardrail fails, stop extraction and quarantine the affected material.
 
 ---
 
-## 13. Change log
+## 14. Change log
 
-- v0.2: Added complete validation levels, optional recommended fields, status contract, transversal rules and final guardrails before PDF extraction.
+- v0.2: Added complete validation levels, optional recommended fields, status contract, operational loader compatibility, transversal rules and final guardrails before PDF extraction.
