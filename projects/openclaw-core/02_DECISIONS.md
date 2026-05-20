@@ -54,3 +54,33 @@ Evitar dependencia de chats largos.
 
 Resultado:
 GitHub guarda estado, decisiones y handoff prompts.
+
+## D-006 — Cerrar trabajo abierto antes de iniciar nuevas implementaciones
+
+Fecha: 2026-05-20
+
+Estado: aceptado.
+
+Motivo:
+Evitar acumulación de piezas a medio cerrar, deriva operativa y falsa sensación de avance.
+
+Regla:
+Antes de implementar funcionalidades nuevas, se deben cerrar, validar y documentar las tareas abiertas.
+
+Resultado esperado:
+Menos deuda operativa, menos ruido y mayor estabilidad del sistema.
+
+## D-007 — Integrar contexto GitHub mediante snapshot antes de tocar RAG API
+
+Fecha: 2026-05-20
+
+Estado: propuesta aceptada para cierre previo; implementación RAG aplazada.
+
+Motivo:
+Evitar acoplar directamente el RAG a múltiples ficheros Markdown o a GitHub en cada petición.
+
+Regla:
+Primero crear un snapshot local explícito del contexto. Solo después evaluar integración en RAG API v2.
+
+Resultado esperado:
+Contexto controlado, acotado y fácil de auditar antes de cualquier cambio en el servicio RAG.
