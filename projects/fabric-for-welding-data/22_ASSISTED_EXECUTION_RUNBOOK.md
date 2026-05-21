@@ -641,6 +641,58 @@ no full git diff unless Albert explicitly asks
 no ../ paths
 ```
 
+### 13.10 Resource usage logging status
+
+Estimated resource usage logging exists, but it is not automatically integrated into `VALIDAR_LOW_SCOPE` or `ASSISTED_EXECUTION`.
+
+Writer:
+
+```text
+/openclaw/workspace/main/scripts/log_resource_usage.py
+```
+
+Log path:
+
+```text
+/openclaw/workspace/main/logs/resource_usage.jsonl
+```
+
+Current state:
+
+```text
+manual logging only
+```
+
+Current usage:
+
+```bash
+python3 scripts/log_resource_usage.py \
+  --flow VALIDAR_LOW_SCOPE \
+  --action <short_action> \
+  --target <path_or_action> \
+  --input-chars <n> \
+  --output-chars <n> \
+  --result ok
+```
+
+Rule:
+
+- events may be registered manually for later analysis;
+- manual logging must not imply automatic runtime integration;
+- missing resource usage event is not an execution failure while logging remains manual.
+
+Limitation:
+
+```text
+No automatic integration exists in VALIDAR_LOW_SCOPE or ASSISTED_EXECUTION.
+```
+
+Future note:
+
+```text
+Automatic integration requires runtime modification and separate explicit authorization.
+```
+
 ---
 
 ## 14. Rollback rules
