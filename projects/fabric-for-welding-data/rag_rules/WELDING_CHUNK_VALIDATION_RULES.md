@@ -34,7 +34,7 @@ Every technical chunk must keep a stable base schema. The schema is intentionall
   "layer": "",
   "type": "signal | cause | defect | action | limitation | context | definition | rule | query_pattern",
   "validation": "A | B | C | D",
-  "status": "approved | conditioned | quarantine | discarded",
+  "status": "draft | review | approved | quarantine | deprecated",
   "applicability": "",
   "risk_note": "",
   "validation_note": ""
@@ -137,7 +137,7 @@ Allowed status:
 
 ---
 
-## 6. B — valid but conditioned
+## 6. B — valid with conditions
 
 Use level **B** when the chunk is useful but depends on explicit conditions.
 
@@ -160,9 +160,16 @@ Allowed status:
 ```json
 {
   "validation": "B",
-  "status": "conditioned"
+  "status": "review"
 }
 ```
+
+Default status for `validation = B` is `review`.
+
+`status = approved` is allowed for `validation = B` only when:
+
+- `risk_note` exists;
+- `applicability` is explicit and not general.
 
 RAG answer rule:
 
@@ -202,7 +209,7 @@ RAG answer rule:
 
 ---
 
-## 8. D — discarded
+## 8. D — deprecated
 
 Use level **D** when the chunk should not be used by the RAG.
 
@@ -220,7 +227,7 @@ Allowed status:
 ```json
 {
   "validation": "D",
-  "status": "discarded"
+  "status": "deprecated"
 }
 ```
 
@@ -237,17 +244,28 @@ The `validation` and `status` fields must remain coherent.
 
 Allowed combinations:
 
-| validation | status      | Meaning |
-|------------|-------------|---------|
-| A          | approved    | Directly usable |
-| B          | conditioned | Usable only with explicit condition |
-| C          | quarantine  | Keep for review, not direct answer |
-| D          | discarded   | Do not use |
+| validation | status     | Meaning |
+|------------|------------|---------|
+| A          | approved   | Directly usable |
+| B          | review     | Valid with conditions; default B status |
+| B          | approved   | Allowed only with `risk_note` and non-general `applicability` |
+| C          | quarantine | Keep for review, not direct answer |
+| D          | deprecated | Do not use |
+
+Allowed status values:
+
+```text
+draft, review, approved, quarantine, deprecated
+```
 
 Forbidden combinations:
 
 - `validation: A` with `status: quarantine`
 - `validation: D` with `status: approved`
+- `validation: B` with `status: approved` when `risk_note` is missing
+- `validation: B` with `status: approved` when `applicability` is general or empty
+- `status: review` used as if it were final approval
+- `status: deprecated` used as if it were retrievable answer material
 - empty `validation`
 - empty `status`
 - undocumented custom status values
@@ -458,7 +476,7 @@ If any guardrail fails, stop extraction and quarantine the affected material.
   "layer": "process_stability_monitoring",
   "type": "rule",
   "validation": "B",
-  "status": "conditioned",
+  "status": "review",
   "applicability": "soldadura por puntos con trazabilidad por robot y programa",
   "risk_note": "El factor 1.5 es provisional y requiere validación con datos reales.",
   "validation_note": "No usar como predicción de nugget ni como criterio universal de calidad."

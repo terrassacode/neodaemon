@@ -330,7 +330,320 @@ Validation proves form and execution result. It does not prove technical truth.
 
 ---
 
-## 13. Rollback rules
+## 13. VALIDACIÓN AUTOMÁTICA CONTROLADA (low_scope)
+
+This flow defines controlled automatic validation for low-scope artifacts.
+
+It is read-only validation only. It does not write, autocorrect, commit, push, touch runtime or call services.
+
+LOW_SCOPE validation is pure structural validation.
+
+It must never depend on repository content, RAG context, external knowledge or semantic inference.
+
+Classification is based only on:
+
+```text
+route + type + scope rules
+```
+
+Neodaemon must never answer that context is missing for a structurally valid `VALIDAR_LOW_SCOPE` input.
+
+If the route and type are valid, Neodaemon must always return a classification result.
+
+### 13.1 Trigger
+
+Mandatory format:
+
+```text
+VALIDAR_LOW_SCOPE <ruta> <tipo>
+```
+
+`tipo` is mandatory.
+
+Allowed types:
+
+```text
+markdown
+json
+shell
+chunk_pilot
+git
+```
+
+Paths containing `../` are forbidden.
+
+### 13.2 Automatic low_scope classification
+
+The validation can be classified as `low_scope` only if all conditions are true:
+
+- target path is present;
+- type is present and allowed;
+- path does not contain `../`;
+- path is inside the allowed validation scope;
+- file exists, except `type = git` with target `.`;
+- action is read-only;
+- no write is attempted;
+- no runtime, service, gateway, model, token or configuration is touched;
+- no `.env` or `openclaw.json` is read;
+- `/rag-ask` is not executed;
+- no network is used;
+- no commit or push is attempted;
+- every command belongs to the whitelist.
+
+Wide scopes such as `.` are allowed for `type = git`, but must report a warning:
+
+```text
+warnings: scope amplio "."
+```
+
+Wide scope is not ERROR_MODE by itself.
+
+If route and type are valid but execution tools are unavailable for `bash -n`, `python3 -m json.tool` or another syntactic validation command, the result must be partial, not an error:
+
+```text
+result: partial
+structural_validation: ok
+syntax_validation: pending
+ERROR_MODE: inactive
+```
+
+Missing exec capability does not invalidate structural LOW_SCOPE classification.
+
+If any condition fails:
+
+```text
+ERROR_MODE=active
+RESULT=not_low_scope
+```
+
+### 13.3 Allowed commands
+
+Strict whitelist:
+
+```bash
+test -e <ruta>
+bash -n <script>
+python3 -m json.tool <json>
+/openclaw/workspace/main/context_repo/scripts/rag_ops/rag_chunk_preflight.sh --pilot <json>
+git -C /openclaw/workspace/main/context_repo status --short
+git -C /openclaw/workspace/main/context_repo diff --stat -- <path>
+git -C /openclaw/workspace/main/context_repo log --oneline -n <N>
+```
+
+Full `git diff` is not allowed by default.
+
+It is allowed only if Albert explicitly asks for it:
+
+```bash
+git -C /openclaw/workspace/main/context_repo diff -- <path>
+```
+
+### 13.4 Prohibited commands and patterns
+
+Forbidden:
+
+```text
+curl
+systemctl
+journalctl
+rm
+cp
+mv
+sed -i
+python scripts that write
+/rag-ask
+git add
+git commit
+git push
+full git diff unless explicitly requested
+paths containing ../
+```
+
+### 13.5 Execution order by type
+
+Common step 0:
+
+```text
+0. confirm path does not contain ../
+1. confirm file exists with test -e <ruta>
+```
+
+Exception:
+
+```text
+type = git and ruta = .
+```
+
+`markdown`:
+
+```text
+0. check path has no ../
+1. check file exists
+2. git -C /openclaw/workspace/main/context_repo diff --stat -- <path>
+3. git -C /openclaw/workspace/main/context_repo status --short
+4. noise control: warning if git status shows changes outside target
+5. POST_ACTION_REVIEW
+```
+
+`json`:
+
+```text
+0. check path has no ../
+1. check file exists
+2. python3 -m json.tool <json>
+3. git -C /openclaw/workspace/main/context_repo diff --stat -- <path>
+4. git -C /openclaw/workspace/main/context_repo status --short
+5. noise control: warning if git status shows changes outside target
+6. POST_ACTION_REVIEW
+```
+
+`chunk_pilot`:
+
+```text
+0. check path has no ../
+1. check file exists
+2. python3 -m json.tool <json>
+3. /openclaw/workspace/main/context_repo/scripts/rag_ops/rag_chunk_preflight.sh --pilot <json>
+4. git -C /openclaw/workspace/main/context_repo diff --stat -- <path>
+5. git -C /openclaw/workspace/main/context_repo status --short
+6. noise control: warning if git status shows changes outside target
+7. POST_ACTION_REVIEW
+```
+
+`shell`:
+
+```text
+0. check path has no ../
+1. check file exists
+2. bash -n <script>
+3. git -C /openclaw/workspace/main/context_repo diff --stat -- <path>
+4. git -C /openclaw/workspace/main/context_repo status --short
+5. noise control: warning if git status shows changes outside target
+6. POST_ACTION_REVIEW
+```
+
+`git`:
+
+```text
+0. check path has no ../
+1. if ruta = ., no specific file is required
+2. git -C /openclaw/workspace/main/context_repo status --short
+3. git -C /openclaw/workspace/main/context_repo diff --stat
+4. POST_ACTION_REVIEW
+```
+
+### 13.6 Git status noise control
+
+After:
+
+```bash
+git -C /openclaw/workspace/main/context_repo status --short
+```
+
+compare output with the target path.
+
+If there are changes outside the target:
+
+```text
+WARNING=changes_outside_target
+```
+
+Report the warning, but do not autocorrect.
+
+If outside changes are unexpected or numerous:
+
+```text
+ERROR_MODE=active
+```
+
+and ask Albert for instruction.
+
+### 13.7 Mandatory output format
+
+```text
+VALIDACIÓN AUTOMÁTICA CONTROLADA
+
+trigger:
+target:
+type:
+classification: low_scope | rejected
+commands_run:
+result:
+errors:
+warnings:
+git_status_noise:
+files_changed:
+validation_summary:
+POST_ACTION_REVIEW:
+next_step:
+```
+
+### 13.8 ERROR_MODE for controlled validation
+
+Activate if:
+
+- type is missing;
+- type is not allowed;
+- path contains `../`;
+- path is out of allowed scope;
+- file does not exist;
+- command is not allowed;
+- command fails;
+- a write attempt appears;
+- `.env` is detected;
+- `openclaw.json` is detected;
+- `/rag-ask` is attempted;
+- full `git diff` is attempted without explicit request;
+- `git status` shows unexpected changes outside target;
+- wrapper is missing;
+- JSON validation fails;
+- preflight fails;
+- `bash -n` fails.
+
+Do not activate ERROR_MODE because repository content is unknown or because contextual knowledge is missing.
+
+`VALIDAR_LOW_SCOPE` must not escalate to contextual reasoning, RAG, or content inference.
+
+Required output:
+
+```text
+ERROR_MODE=active
+failure:
+target:
+command_failed:
+rollback_required: no
+autocorrection: forbidden
+next_step:
+```
+
+Rules:
+
+```text
+No autocorrection.
+No file creation.
+No file modification.
+No retry with unauthorized alternative commands.
+```
+
+### 13.9 Final rule
+
+This flow validates only.
+
+```text
+read-only validation only
+no autocorrection
+no writes
+no commit
+no push
+no runtime
+no services
+no full git diff unless Albert explicitly asks
+no ../ paths
+```
+
+---
+
+## 14. Rollback rules
 
 Rollback must be known before execution.
 
@@ -362,7 +675,7 @@ Rollback must never require service restart unless Albert separately authorizes 
 
 ---
 
-## 14. Concrete allowed examples
+## 15. Concrete allowed examples
 
 ### Example A — create one MAIN documentation file
 
@@ -427,7 +740,7 @@ RAG-specific actions such as `/rag-ask`, chunk creation, prompt changes or runti
 
 ---
 
-## 15. Concrete blocked examples
+## 16. Concrete blocked examples
 
 ### Blocked A — create several files
 
@@ -455,7 +768,7 @@ Blocked because tokens, `.env`, `openclaw.json`, gateway and runtime configurati
 
 ---
 
-## 16. Final rule
+## 17. Final rule
 
 `ASSISTED_EXECUTION_LOW_SCOPE` is permission to execute one small safe MAIN step, not permission to keep going.
 
