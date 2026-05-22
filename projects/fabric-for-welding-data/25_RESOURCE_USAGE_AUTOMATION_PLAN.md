@@ -505,6 +505,7 @@ LTU
 SYSTEMD
 GIT
 RAG_PAUSED
+TEST
 OTHER
 ```
 
@@ -578,3 +579,36 @@ Examples that should not be logged:
 - a conversation clarifies scope but produces no action or decision.
 
 Level 2 therefore counts relevant operational events, not conversational turns.
+
+---
+
+## 13. TEST flow convention
+
+Status: active convention for future Resource Usage events.
+
+Use flow:
+
+```text
+TEST
+```
+
+for technical tests, pipeline validations and artificial events.
+
+Examples:
+
+- Resource Usage exporter test;
+- metrics pipeline test;
+- dashboard refresh test;
+- synthetic event used to verify logging behavior.
+
+Do not use `EPCODM` for infrastructure tests.
+
+`EPCODM` must remain reserved for actual EPCODM-governed operational changes or decisions.
+
+Historical rule:
+
+```text
+Do not rewrite already registered historical events only to change their flow.
+```
+
+If older test events were logged under `EPCODM`, keep them as historical record and use `TEST` from this point forward.
