@@ -304,6 +304,12 @@
       return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
     }
 
+    function getReviewAgeMinutes(value) {
+      const date = new Date(String(value || ""));
+      if (Number.isNaN(date.getTime())) return null;
+      return Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+    }
+
     function renderKpis(data) {
       const totals = data.totals || {};
       const actions = Number(totals.actions_count ?? totals.events ?? 0);
@@ -316,6 +322,7 @@
         : 0;
       const tokensPerMinute = Math.round(latestHourTokens / 60);
       const reviewTime = formatReviewTime(data.generated_at);
+      const reviewAgeMinutes = getReviewAgeMinutes(data.generated_at);
       return `
         <div class="card">
           <div class="kpi-label">Total tokens estimados</div>
@@ -337,6 +344,10 @@
           <div class="kpi-label">Tokens/min (estimado)</div>
           <div class="kpi-value">${numberText(tokensPerMinute)}</div>
           <div class="muted">Última revisión: ${reviewTime}</div>
+          <div class="muted">${reviewAgeMinutes === null ? "Hace: sin datos" : `Hace ${reviewAgeMinutes} min`}</div>
+          ${reviewAgeMinutes !== null && reviewAgeMinutes > 10
+            ? `<div class="warning">Revisión antigua: regenera token_dashboard.json</div>`
+            : ""}
         </div>
       `;
     }
