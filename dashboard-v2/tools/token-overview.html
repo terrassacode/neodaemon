@@ -294,6 +294,16 @@
       return Math.round((Number(part || 0) / safeTotal) * 100);
     }
 
+    function formatReviewTime(value) {
+      const match = String(value || "").match(
+        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/
+      );
+      if (!match) return "sin revisión";
+
+      const [, year, month, day, hour, minute, second] = match;
+      return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+    }
+
     function renderKpis(data) {
       const totals = data.totals || {};
       const actions = Number(totals.actions_count ?? totals.events ?? 0);
@@ -305,6 +315,7 @@
         ? Number(hourlyEntries[hourlyEntries.length - 1][1] || 0)
         : 0;
       const tokensPerMinute = Math.round(latestHourTokens / 60);
+      const reviewTime = formatReviewTime(data.generated_at);
       return `
         <div class="card">
           <div class="kpi-label">Total tokens estimados</div>
@@ -325,6 +336,7 @@
         <div class="card">
           <div class="kpi-label">Tokens/min (estimado)</div>
           <div class="kpi-value">${numberText(tokensPerMinute)}</div>
+          <div class="muted">Última revisión: ${reviewTime}</div>
         </div>
       `;
     }
