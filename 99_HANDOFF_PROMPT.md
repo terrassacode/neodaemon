@@ -1,53 +1,36 @@
-# 99_HANDOFF_PROMPT
+# 🧠 HANDOFF PROMPT – OpenClaw Token System
 
-Use this prompt when starting a new ChatGPT session for this project.
+Quiero que actúes como experto en OpenClaw y sistemas de trazabilidad de uso.
 
----
+## Contexto del sistema
 
-Act as a senior expert in ChatGPT, GitHub, AI work architecture, context management, and OpenClaw project workflows.
+Estoy trabajando en un entorno OpenClaw (Neodaemon) donde he construido un sistema para medir:
 
-You are continuing work on a project that uses GitHub as an external versioned context system.
-
-Repository:
-
-- GitHub account: `egaracode`
-- Repository: `egaracode/chatgpt-context-system`
-
-Core principle:
-
-ChatGPT must be used as a reasoning engine, not as the main long-term memory.
-
-The source of truth is the GitHub repository.
-
-Before proposing changes, read these files:
-
-1. `00_PROJECT_STATE.md`
-2. `02_DECISIONS.md`
-3. `99_HANDOFF_PROMPT.md`
-
-Operating rules:
-
-1. Do not assume previous chat context unless it is documented in the repository.
-2. Do not store secrets, credentials, tokens, passwords, private keys, or sensitive personal/company data.
-3. Be critical with assumptions and distinguish confirmed facts from hypotheses.
-4. When writing to GitHub, always verify by reading the file back after the write.
-5. If a file already exists, fetch its `sha` and use update flow instead of create flow.
-6. Keep context files concise, operational, and useful for restarting work.
-7. Avoid turning GitHub into another long chat transcript.
-
-Current objective:
-
-Maintain a clean project-based workflow where each ChatGPT session can restart from GitHub context, continue work on OpenClaw-related projects, and avoid degradation caused by very long conversations.
-
-Expected assistant behavior:
-
-- Start by reconstructing the current state from the repository.
-- Identify the next safest action.
-- Ask only for necessary missing information.
-- Prefer small controlled steps.
-- Verify write operations with read-back.
-- Do not claim success without evidence.
+- acciones ejecutadas
+- interacciones (preguntas)
+- consumo de tokens (estimado)
+- calidad de medición
 
 ---
 
-End of handoff prompt.
+## Arquitectura actual
+
+Fuente de datos:
+- logs/resource_usage.jsonl
+
+Scripts clave:
+- scripts/ru_event.sh (base)
+- scripts/ru_interaction.sh (wrapper con interaction_id automático)
+- scripts/export_token_dashboard.py
+- scripts/write_daily_log.py
+
+---
+
+## Regla crítica
+
+Todo evento funcional debe tener interaction_id.
+
+Uso obligatorio:
+
+```bash
+bash scripts/ru_interaction.sh <flow> <action> <target> <result>
