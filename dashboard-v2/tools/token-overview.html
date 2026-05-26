@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Token Overview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #020617;
+      --panel: #0f172a;
+      --panel-2: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #1e293b;
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 28rem),
+        radial-gradient(circle at bottom right, rgba(167, 139, 250, 0.12), transparent 28rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: #bfdbfe;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      background: rgba(15, 23, 42, 0.82);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.05em;
+    }
+
+    h2, h3 {
+      margin: 0 0 12px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .warning {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 999px;
+      color: #fde68a;
+      background: rgba(245, 158, 11, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .kpis {
+      grid-template-columns: 2fr repeat(4, minmax(0, 1fr));
+      margin-bottom: 14px;
+    }
+
+    .main-grid {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: rgba(15, 23, 42, 0.82);
+      min-width: 0;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: clamp(1.6rem, 4vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .donut-wrap {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: conic-gradient(var(--blue) 0deg, var(--purple) 0deg);
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .donut::after {
+      content: "";
+      width: 112px;
+      height: 112px;
+      background: var(--panel);
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .donut-center {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .legend {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .legend b {
+      color: var(--text);
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 8px;
+    }
+
+    .bar-row {
+      margin: 12px 0;
+    }
+
+    .bar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .bar-track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #1e293b;
+    }
+
+    .bar-fill {
+      height: 12px;
+      width: 0%;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .bar-fill.action {
+      background: var(--blue);
+    }
+
+    .bar-fill.noise-ok {
+      background: var(--green);
+    }
+
+    .bar-fill.noise-warn {
+      background: var(--amber);
+    }
+
+    .bar-fill.noise-critical {
+      background: var(--red);
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.65);
+    }
+
+    .list strong {
+      display: block;
+      margin-bottom: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .error {
+      border-color: rgba(251, 113, 133, 0.45);
+      color: #fecdd3;
+    }
+
+    @media (max-width: 820px) {
+      body { padding: 14px; }
+      .kpis, .main-grid { grid-template-columns: 1fr; }
+      .donut-wrap { grid-template-columns: 1fr; justify-items: center; }
+      .donut { width: 150px; height: 150px; }
+      .donut::after { width: 94px; height: 94px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back" href="./resource-usage.html">← Volver a Actividad y consumo</a>
+
+    <section class="hero">
+      <h1>Token Overview</h1>
+      <p class="muted">Dashboard visual del consumo estimado de tokens de Neodaemon.</p>
+      <span class="warning">Datos estimados. No equivalen necesariamente a facturación real.</span>
+    </section>
+
+    <section class="grid kpis" id="kpis">
+      <div class="card">Cargando KPIs…</div>
+    </section>
+
+    <section class="grid main-grid">
+      <div class="card" id="input-output">Cargando entrada vs salida…</div>
+      <div class="card" id="noise-quality">Cargando calidad de medición…</div>
+      <div class="card wide" id="usage-over-time">Cargando Token Usage Over Time…</div>
+      <div class="card" id="by-day">Cargando consumo por día…</div>
+      <div class="card" id="top-actions">Cargando top acciones…</div>
+      <div class="card" id="top-interactions">Cargando top interacciones…</div>
+    </section>
+  </main>
+
+  <script>
+    const TOKEN_DASHBOARD_URL = "../data/token_dashboard.json";
+
+    function text(value) {
+      return value === undefined || value === null ? "" : String(value);
+    }
+
+    function numberText(value) {
+      return Number(value || 0).toLocaleString("es-ES");
+    }
+
+    function percent(part, total) {
+      const safeTotal = Math.max(Number(total || 0), 1);
+      return Math.round((Number(part || 0) / safeTotal) * 100);
+    }
+
+    function formatReviewTime(value) {
+      const match = String(value || "").match(
+        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/
+      );
+      if (!match) return "sin revisión";
+
+      const [, year, month, day, hour, minute, second] = match;
+      return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
+    }
+
+    function getReviewAgeMinutes(value) {
+      const date = new Date(String(value || ""));
+      if (Number.isNaN(date.getTime())) return null;
+      return Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
+    }
+
+    function renderKpis(data) {
+      const totals = data.totals || {};
+      const actions = Number(totals.actions_count ?? totals.events ?? 0);
+      const withoutInteraction = Number(totals.events_without_interaction_id_count || 0);
+      const noisePct = percent(withoutInteraction, actions);
+      const hourlyEntries = Object.entries(data.tokens_by_hour || {})
+        .sort(([a], [b]) => a.localeCompare(b));
+      const latestHourTokens = hourlyEntries.length
+        ? Number(hourlyEntries[hourlyEntries.length - 1][1] || 0)
+        : 0;
+      const tokensPerMinute = Math.round(latestHourTokens / 60);
+      const reviewTime = formatReviewTime(data.generated_at);
+      const reviewAgeMinutes = getReviewAgeMinutes(data.generated_at);
+      return `
+        <div class="card">
+          <div class="kpi-label">Total tokens estimados</div>
+          <div class="kpi-value">${numberText(totals.total_tokens_estimated)}</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Entrada estimada</div>
+          <div class="kpi-value">${numberText(totals.input_tokens_estimated)}</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Salida estimada</div>
+          <div class="kpi-value">${numberText(totals.output_tokens_estimated)}</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Eventos sin interaction_id</div>
+          <div class="kpi-value">${noisePct}%</div>
+        </div>
+        <div class="card">
+          <div class="kpi-label">Tokens/min (estimado)</div>
+          <div class="kpi-value">${numberText(tokensPerMinute)}</div>
+          <div class="muted">Última revisión: ${reviewTime}</div>
+          <div class="muted">${reviewAgeMinutes === null ? "Hace: sin datos" : `Hace ${reviewAgeMinutes} min`}</div>
+          ${reviewAgeMinutes !== null && reviewAgeMinutes > 10
+            ? `<div class="warning">Revisión antigua: regenera token_dashboard.json</div>`
+            : ""}
+        </div>
+      `;
+    }
+
+    function renderNoiseQuality(data) {
+      const totals = data.totals || {};
+      const actions = Number(totals.actions_count ?? totals.events ?? 0);
+      const withoutInteraction = Number(totals.events_without_interaction_id_count || 0);
+      const noisePct = percent(withoutInteraction, actions);
+      const fillClass = noisePct > 60 ? "noise-critical" : noisePct > 30 ? "noise-warn" : "noise-ok";
+      const needsAttention = noisePct > 30;
+
+      return `
+        <h2>Calidad de medición</h2>
+        <div class="bar-head">
+          <span>Eventos sin interaction_id</span>
+          <strong>${noisePct}%</strong>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill ${fillClass}" style="width:${Math.max(4, noisePct)}%"></div>
+        </div>
+        <p class="muted">
+          ${numberText(withoutInteraction)} de ${numberText(actions)} eventos no están asociados a una interacción.
+        </p>
+        <p>${needsAttention ? "Requiere atención: la medición por pregunta no es fiable." : "Correcto: el ruido está por debajo del umbral operativo."}</p>
+      `;
+    }
+
+    function renderInputOutput(data) {
+      const totals = data.totals || {};
+      const input = Number(totals.input_tokens_estimated || 0);
+      const output = Number(totals.output_tokens_estimated || 0);
+      const total = input + output;
+      const inputPct = percent(input, total);
+      const outputPct = percent(output, total);
+      const inputDeg = Math.round(inputPct * 3.6);
+
+      return `
+        <h2>Entrada vs salida</h2>
+        <div class="donut-wrap">
+          <div class="donut" style="background: conic-gradient(var(--blue) 0deg ${inputDeg}deg, var(--purple) ${inputDeg}deg 360deg);">
+            <div class="donut-center">${numberText(total)}<br /><span class="muted">tokens</span></div>
+          </div>
+          <div class="legend">
+            <div><span class="dot" style="background:var(--blue)"></span>Entrada: <b>${numberText(input)}</b> · ${inputPct}%</div>
+            <div><span class="dot" style="background:var(--purple)"></span>Salida: <b>${numberText(output)}</b> · ${outputPct}%</div>
+            <div class="muted">Modelo: ${text(data.model || "ChatGPT 5.5")}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBars(title, entries, keyName) {
+      const max = Math.max(...entries.map(item => Number(item.tokens || item.total_tokens_estimated || 0)), 1);
+      return `
+        <h2>${title}</h2>
+        ${entries.length ? entries.map(item => {
+          const label = text(item.label || item[keyName] || "sin dato");
+          const tokens = Number(item.tokens || item.total_tokens_estimated || 0);
+          const width = Math.max(4, (tokens / max) * 100);
+          return `
+            <div class="bar-row">
+              <div class="bar-head"><span>${label}</span><strong>${numberText(tokens)}</strong></div>
+              <div class="bar-track"><div class="bar-fill action" style="width:${width}%"></div></div>
+            </div>
+          `;
+        }).join("") : `<p class="muted">Sin datos suficientes.</p>`}
+      `;
+    }
+
+    function renderByDay(data) {
+      const entries = Object.entries(data.tokens_by_day || {}).map(([day, tokens]) => ({ label: day, tokens }));
+      return renderBars("Consumo por día", entries, "label");
+    }
+
+    function renderUsageOverTime(data) {
+      const entries = Object.entries(data.tokens_by_hour || {}).map(([hour, tokens]) => ({ label: hour, tokens }));
+      return renderBars("Token Usage Over Time", entries.slice(-24), "label");
+    }
+
+    function renderTopActions(data) {
+      return renderBars("Top acciones por consumo", (data.top_actions || []).slice(0, 8), "action");
+    }
+
+    function renderTopInteractions(data) {
+      const interactions = (data.top_interactions || []).slice(0, 8);
+      return `
+        <h2>Top interacciones</h2>
+        ${interactions.length ? `
+          <ul class="list">
+            ${interactions.map(item => `
+              <li>
+                <strong>${text(item.interaction_id || "sin interacción")}</strong>
+                <span class="muted">${numberText(item.total_tokens_estimated)} tokens · ${numberText(item.events)} eventos</span>
+              </li>
+            `).join("")}
+          </ul>
+        ` : `<p class="muted">Aún no hay interacciones suficientes.</p>`}
+      `;
+    }
+
+    async function load() {
+      try {
+        const response = await fetch(TOKEN_DASHBOARD_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+
+        document.getElementById("kpis").innerHTML = renderKpis(data);
+        document.getElementById("input-output").innerHTML = renderInputOutput(data);
+        document.getElementById("noise-quality").innerHTML = renderNoiseQuality(data);
+        document.getElementById("usage-over-time").innerHTML = renderUsageOverTime(data);
+        document.getElementById("by-day").innerHTML = renderByDay(data);
+        document.getElementById("top-actions").innerHTML = renderTopActions(data);
+        document.getElementById("top-interactions").innerHTML = renderTopInteractions(data);
+      } catch (error) {
+        document.getElementById("kpis").innerHTML =
+          `<div class="card error">No se pudo cargar token_dashboard.json: ${text(error.message)}</div>`;
+      }
+    }
+
+    load();
+    setInterval(load, 60000);
+  </script>
+</body>
+</html>
