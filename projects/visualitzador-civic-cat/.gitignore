@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+*.log
+exports/*
+!exports/.gitkeep
+data_samples/*
+!data_samples/.gitkeep
