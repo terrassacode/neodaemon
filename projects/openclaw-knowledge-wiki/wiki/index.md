@@ -17,6 +17,7 @@ Segundo ingest manual ejecutado.
 
 - `sources/first-source-openclaw-knowledge-wiki-readme.md` — resumen trazable del README del propio proyecto.
 - `sources/project-isolation-policy.md` — resumen trazable de la política de aislamiento de proyectos OpenClaw.
+- `concepts/project-core-boundary.md` — nota conceptual sobre la frontera operativa entre proyectos aislados y core OpenClaw.
 
 ## Fuentes registradas
 
@@ -28,4 +29,5 @@ Segundo ingest manual ejecutado.
 - Revisar si el nivel de detalle de la nota generada es útil.
 - Mantener máximo 3 fuentes por ingest.
 - Revisar el segundo ingest mediante lint manual.
+- Revisar la nota conceptual `project-core-boundary.md` mediante lint manual.
 - Definir próxima fuente no sensible.
