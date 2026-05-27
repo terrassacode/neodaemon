@@ -129,3 +129,86 @@ El segundo ingest queda validado como correcto y conservador.
 ## Estado
 
 Segundo ingest y lint manual: OK.
+
+### 2026-05-27 — Nota conceptual project-core-boundary creada
+
+## Fuentes wiki usadas
+
+- `wiki/sources/project-isolation-policy.md`
+- `wiki/sources/first-source-openclaw-knowledge-wiki-readme.md`
+- `NEODAEMON_WIKI.md`
+- `wiki/index.md`
+
+## Nota creada
+
+- `wiki/concepts/project-core-boundary.md`
+
+## Tipo
+
+Nota conceptual derivada.
+
+## Límites
+
+- No se leyó `raw/`.
+- No se creó fuente nueva.
+- Sin APIs externas.
+- Sin scripts globales.
+- Sin dependencias.
+- Sin escribir fuera del proyecto.
+- Sin suavizar restricciones de seguridad.
+
+## Resultado esperado
+
+Crear una guía operacional breve sobre cómo distinguir proyecto y core, manteniendo trazabilidad hacia las notas fuente existentes.
+
+### 2026-05-27 — Lint manual de nota conceptual project-core-boundary
+
+## Archivo revisado
+
+- `wiki/concepts/project-core-boundary.md`
+
+## Tipo
+
+Lint manual de nota conceptual.
+
+## Resultado
+
+PASS.
+
+## Warnings
+
+- La checklist omite `briefings`, `backups` y `git_clean`, aunque sí aparecen antes en “Datos confirmados”.
+- “zona segura” es una inferencia razonable, pero debe entenderse como segura solo bajo restricciones de aislamiento.
+
+## Decisión
+
+No modificar ahora.
+
+### 2026-05-27 — Lint manual de project-core-boundary validado
+
+## Revisión
+
+Se revisó la nota conceptual:
+
+- `wiki/concepts/project-core-boundary.md`
+
+## Resultado
+
+La nota queda validada como correcta y usable.
+
+## Observaciones
+
+- Tiene fuentes claras.
+- No cita archivos inexistentes.
+- Distingue datos confirmados, inferencias y dudas.
+- No suaviza restricciones de seguridad.
+- No convierte la checklist en autorización automática.
+- Mantiene que las dudas requieren autorización explícita de Albert.
+- No contradice project-isolation-policy.
+- No requiere leer raw/.
+- No se detectaron secretos.
+- No se detectaron claims sin fuente.
+
+## Estado
+
+Nota conceptual project-core-boundary: OK.
