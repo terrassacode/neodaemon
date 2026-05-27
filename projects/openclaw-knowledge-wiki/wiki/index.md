@@ -4,7 +4,7 @@ Catálogo maestro de notas generadas por Neodaemon.
 
 ## Estado
 
-Primer ingest manual ejecutado.
+Segundo ingest manual ejecutado.
 
 ## Secciones
 
@@ -16,13 +16,16 @@ Primer ingest manual ejecutado.
 ## Notas
 
 - `sources/first-source-openclaw-knowledge-wiki-readme.md` — resumen trazable del README del propio proyecto.
+- `sources/project-isolation-policy.md` — resumen trazable de la política de aislamiento de proyectos OpenClaw.
 
 ## Fuentes registradas
 
 - `raw/notes/first-source-openclaw-knowledge-wiki-readme.md` — copia inmutable de `README.md`.
+- `raw/docs/project-isolation-policy.md` — copia inmutable de `PROJECT_ISOLATION_POLICY.md`.
 
 ## Pendiente
 
 - Revisar si el nivel de detalle de la nota generada es útil.
 - Mantener máximo 3 fuentes por ingest.
+- Revisar el segundo ingest mediante lint manual.
 - Definir próxima fuente no sensible.
