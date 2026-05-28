@@ -428,3 +428,33 @@ Diseño de `github_pr_workflow_runner.py` para evolución gradual hacia automati
 ## Estado
 
 Diseño técnico corregido: creado.
+
+### 2026-05-28 — python-code-self-check-rule creada
+
+## Nota creada
+
+- `wiki/concepts/python-code-self-check-rule.md`
+
+## Tipo
+
+Regla operativa para propuestas y cambios Python.
+
+## Contenido
+
+Documenta `SELF_CHECK_PYTHON` como revisión obligatoria antes de proponer o crear código Python.
+
+## Límites
+
+- No se creó código Python.
+- No se ejecutaron tests.
+- Sin ejecutar Git.
+- Sin tocar runner.
+- Sin tocar policy.
+- Sin tocar `raw/`.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Estado
+
+Regla creada.
