@@ -24,6 +24,7 @@ Segundo ingest manual ejecutado.
 - `concepts/github-pr-workflow-skill-first-real-test.md` — registro de la primera prueba real mínima de la skill `github-pr-workflow`, limitada a Fase 1 workspace.
 - `concepts/github-pr-workflow-runner-design.md` — diseño técnico corregido del runner `github_pr_workflow_runner.py` para automatización 100% controlada de `DOCS_LOW_RISK`.
 - `concepts/python-code-self-check-rule.md` — regla obligatoria `SELF_CHECK_PYTHON` para revisar código Python antes de proponerlo o crearlo.
+- `concepts/github-pr-workflow-runner-v0-2-copy-plan.md` — plan técnico obligatorio para implementar `copy` controlado con snapshot, copy atómico y revalidación en runner v0.2.
 
 ## Fuentes registradas
 
@@ -42,4 +43,5 @@ Segundo ingest manual ejecutado.
 - Validar la Fase 1 de `github-pr-workflow-skill-first-real-test.md`.
 - Revisar la nota conceptual `github-pr-workflow-runner-design.md` mediante lint manual.
 - Revisar la nota conceptual `python-code-self-check-rule.md` mediante lint manual.
+- Revisar la nota conceptual `github-pr-workflow-runner-v0-2-copy-plan.md` mediante lint manual.
 - Definir próxima fuente no sensible.

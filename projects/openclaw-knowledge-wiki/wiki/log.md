@@ -458,3 +458,36 @@ Documenta `SELF_CHECK_PYTHON` como revisión obligatoria antes de proponer o cre
 ## Estado
 
 Regla creada.
+
+### 2026-05-28 — github-pr-workflow-runner-v0-2-copy-plan creada
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-runner-v0-2-copy-plan.md`
+
+## Tipo
+
+Plan técnico previo a implementación.
+
+## Contenido
+
+Documenta criterios obligatorios para implementar `copy` automático controlado en `github_pr_workflow_runner.py` v0.2, incluyendo snapshot, copy atómico, hash source before/after, permisos no ejecutables, validación de tamaño antes de leer contenido completo, revalidación, symlink/path traversal checks, bloqueo de rutas prohibidas y rollback sin `git reset --hard`.
+
+## Límites
+
+- No se creó código Python.
+- No se modificó runner.
+- No se modificó policy.
+- No se creó `run_state`.
+- No se copiaron archivos reales.
+- Sin ejecutar Git.
+- Sin tocar repo limpio.
+- Sin commit, push, PR ni merge.
+- Sin tocar `raw/`.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Estado
+
+Plan creado.
