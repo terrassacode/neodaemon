@@ -1,0 +1,7 @@
+# Runtime state: never version
+run_state/
+approvals/
+
+# Temporary/runtime files
+*.tmp
+*.log

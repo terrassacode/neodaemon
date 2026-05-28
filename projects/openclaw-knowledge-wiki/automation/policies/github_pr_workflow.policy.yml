@@ -1,0 +1,96 @@
+version: 0.1
+default_safe_to_execute: false
+
+paths:
+  workspace_root: /openclaw/workspace/main
+  repo_root: /openclaw/workspace/git_clean/neodaemon_repo
+  run_state_dir: projects/openclaw-knowledge-wiki/automation/run_state
+
+change_classes:
+  DOCS_LOW_RISK:
+    description: "Cambios documentales acotados, UTF-8, sin secretos ni código ejecutable."
+
+    # Objetivos de madurez futura. No son comportamiento activo en runner v0.1.
+    allow_auto_commit: true
+    allow_auto_push: true
+    allow_auto_pr: true
+    allow_auto_merge: false
+
+    allowed_paths:
+      - projects/openclaw-knowledge-wiki/wiki/concepts/**
+      - projects/openclaw-knowledge-wiki/wiki/index.md
+      - projects/openclaw-knowledge-wiki/wiki/log.md
+
+    forbidden_paths:
+      - projects/openclaw-knowledge-wiki/raw/**
+      - .env
+      - "**/.env"
+      - "**/*token*"
+      - "**/*secret*"
+      - "**/*credential*"
+      - "**/*.pem"
+      - "**/*.key"
+      - logs/**
+      - systemd/**
+      - rag_store/**
+      - context_repo/personal/**
+      - .git/**
+
+    allowed_extensions:
+      - .md
+
+    allowed_encodings:
+      - utf-8
+
+    max_files_changed: 3
+    max_file_bytes: 200000
+    max_added_lines: 300
+    max_deleted_lines: 80
+
+    reject_symlinks: true
+    reject_binary: true
+    reject_path_traversal: true
+    require_realpath_inside_allowlist: true
+    require_snapshot_before_copy: true
+    require_append_only_log: true
+    require_index_reference: true
+    require_secret_scan: true
+    require_diff_policy: true
+    require_post_copy_revalidation: true
+
+branching:
+  base_branch: main
+  branch_prefix: docs/
+  branch_if_exists: block
+  max_branch_length: 80
+
+github:
+  pr_labels:
+    - docs
+    - low-risk
+  auto_merge:
+    enabled: false
+    design_future_only: true
+
+runner_v0_1:
+  implemented_commands:
+    - plan
+    - check
+  not_implemented_commands:
+    - copy
+    - commit
+    - push
+    - pr
+    - merge
+
+commands:
+  deny:
+    - "git add ."
+    - "git add -A"
+    - "git push --force"
+    - "git push --force-with-lease"
+    - "git reset --hard"
+    - "git clean -fd"
+    - "git merge"
+    - "git rebase"
+    - "gh pr merge"
