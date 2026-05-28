@@ -19,6 +19,7 @@ Segundo ingest manual ejecutado.
 - `sources/project-isolation-policy.md` — resumen trazable de la política de aislamiento de proyectos OpenClaw.
 - `concepts/project-core-boundary.md` — nota conceptual sobre la frontera operativa entre proyectos aislados y core OpenClaw.
 - `concepts/obsidian-operating-rules.md` — reglas operativas para usar Obsidian como visor/editor local sin romper aislamiento.
+- `concepts/github-pr-workflow-skill-design.md` — diseño de una skill local segura para asistir flujos GitHub PR manuales sin autopilot.
 
 ## Fuentes registradas
 
@@ -32,4 +33,5 @@ Segundo ingest manual ejecutado.
 - Revisar el segundo ingest mediante lint manual.
 - Revisar la nota conceptual `project-core-boundary.md` mediante lint manual.
 - Revisar la nota conceptual `obsidian-operating-rules.md` mediante lint manual.
+- Revisar la nota conceptual `github-pr-workflow-skill-design.md` mediante lint manual.
 - Definir próxima fuente no sensible.

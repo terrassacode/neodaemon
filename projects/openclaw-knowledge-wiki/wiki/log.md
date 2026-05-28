@@ -269,3 +269,35 @@ Nota conceptual operativa.
 ## Resultado esperado
 
 Definir reglas claras para usar Obsidian como visor/editor Markdown local sin romper aislamiento, trazabilidad ni seguridad.
+
+### 2026-05-28 — github-pr-workflow-skill-design creada
+
+## Fuentes wiki usadas
+
+- `wiki/concepts/project-core-boundary.md`
+- `wiki/concepts/obsidian-operating-rules.md`
+- reglas operativas confirmadas por Albert para el diseño GitHub PR workflow skill
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-design.md`
+
+## Tipo
+
+Nota conceptual de diseño operativo.
+
+## Límites
+
+- No se leyó `raw/`.
+- No se creó skill real.
+- Sin ejecutar Git.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth ni tokens.
+- Sin tocar systemd.
+- Sin tocar `.env`.
+- Sin leer logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Resultado esperado
+
+Documentar un MVP seguro para asistir flujos GitHub PR manuales sin autopilot, con allowlist, bloqueo por defecto, secret scan silencioso, separación de fases y merge automático prohibido.
