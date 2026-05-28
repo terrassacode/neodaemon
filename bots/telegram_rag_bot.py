@@ -1,3 +1,4 @@
+import re
 import json
 import time
 import requests
@@ -6,6 +7,16 @@ from main_handler import ask_main
 from dotenv import load_dotenv
 import os
 load_dotenv("/openclaw/.env")
+
+
+def redact_secret(text):
+    text = "" if text is None else str(text)
+    text = re.sub(r"https://api\.telegram\.org/bot[^\s\"']+", "[REDACTED_TELEGRAM_BOT_API_URL]", text)
+    text = re.sub(r"api\.telegram\.org/bot[^\s\"']+", "api.telegram.org/bot[REDACTED]", text)
+    text = re.sub(r"bot[0-9]{6,}:[A-Za-z0-9_-]+", "bot[REDACTED]", text)
+    text = re.sub(r"token=[^\s&\"']+", "token=***", text)
+    text = re.sub(r"TELEGRAM_BOT_TOKEN=[^\s\"']+", "TELEGRAM_BOT_TOKEN=***", text)
+    return text
 
 CONFIG = "/home/openclaw/.openclaw/openclaw.json"
 API_URL = "http://127.0.0.1:5001/rag-ask"
@@ -218,7 +229,7 @@ def main():
                 send_message(chat_id, answer)
 
         except Exception as e:
-            print("ERROR:", e)
+            print("ERROR:", redact_secret(e))
             time.sleep(5)
 
 if __name__ == "__main__":
