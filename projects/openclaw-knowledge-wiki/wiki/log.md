@@ -381,3 +381,50 @@ Registro de primera prueba real mínima, limitada a workspace.
 ## Resultado
 
 Fase 1 creada y validada en workspace.
+
+### 2026-05-28 — github-pr-workflow-runner-design creada
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-runner-design.md`
+
+## Tipo
+
+Diseño técnico corregido para runner de automatización controlada.
+
+## Alcance
+
+Diseño de `github_pr_workflow_runner.py` para evolución gradual hacia automatización completa de `DOCS_LOW_RISK`.
+
+## Límites
+
+- No se creó runner real.
+- No se creó policy real.
+- No se creó `.gitignore`.
+- No se creó `run_state`.
+- Sin ejecutar Git.
+- Sin instalar dependencias.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin tocar `raw/`.
+- Sin escribir fuera del proyecto.
+
+## Correcciones incorporadas
+
+- Ruta `automation/github_pr_workflow_runner.py`, no `tools/`.
+- Policy en `automation/policies/github_pr_workflow.policy.yml`.
+- `automation/run_state/` no versionado por defecto.
+- v0.1 solo `plan/check`.
+- Sin comando `merge` en v0.1.
+- Approval mediante `--approval-file` o `--confirm-risk`, no tokens secretos.
+- Checks de symlink, realpath y path traversal.
+- Snapshot antes de copiar.
+- Branch existente bloquea salvo recovery explícito.
+- Revalidación post-copy.
+- Bloqueo de binarios, encoding no UTF-8 y tamaños excesivos.
+- Aclarado que patrones `**/*token*` bloquean nombres de archivo; contenido tipo `token=` va por secret scan silencioso.
+- Aclarado que `allow_auto_commit`, `allow_auto_push` y `allow_auto_pr` son objetivo de madurez, no comportamiento activo en v0.1.
+
+## Estado
+
+Diseño técnico corregido: creado.
