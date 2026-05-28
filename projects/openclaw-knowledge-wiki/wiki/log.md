@@ -212,3 +212,27 @@ La nota queda validada como correcta y usable.
 ## Estado
 
 Nota conceptual project-core-boundary: OK.
+
+### 2026-05-28 — Obsidian conectado como vault local
+
+## Tipo
+
+Hito operativo local.
+
+## Descripción
+
+Obsidian queda conectado como vault local para visualizar y editar Markdown dentro del proyecto OpenClaw Knowledge Wiki.
+
+## Límites
+
+- Obsidian es opcional.
+- No es dependencia obligatoria.
+- No razona, no ingiere fuentes y no valida contenido.
+- No introduce automatización.
+- No usa APIs externas.
+- No modifica `raw/` por sí mismo.
+- La generación y mantenimiento de la wiki sigue correspondiendo a Neodaemon bajo autorización de Albert.
+
+## Estado
+
+Obsidian vault local: OK.
