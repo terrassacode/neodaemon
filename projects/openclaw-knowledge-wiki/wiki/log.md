@@ -301,3 +301,48 @@ Nota conceptual de diseño operativo.
 ## Resultado esperado
 
 Documentar un MVP seguro para asistir flujos GitHub PR manuales sin autopilot, con allowlist, bloqueo por defecto, secret scan silencioso, separación de fases y merge automático prohibido.
+
+### 2026-05-28 — github-pr-workflow-skill dry-run v2 documentado
+
+## Skill evaluada
+
+- `skills/github-pr-workflow/SKILL.md`
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-dry-run-v2.md`
+
+## Tipo
+
+Registro conceptual de dry-run.
+
+## Resultado
+
+APROBADO.
+
+## Validación conceptual
+
+La simulación confirmó que la skill distingue correctamente:
+
+- workspace source;
+- repo target;
+- rutas Git relativas.
+
+## Límites
+
+- No se ejecutó Git.
+- No se creó rama.
+- No se copiaron archivos.
+- No se hizo secret scan real.
+- No hubo commit.
+- No hubo push.
+- No hubo PR.
+- No hubo merge.
+- No se instaló la skill.
+- No se tocó `~/.openclaw/skills`.
+- No se tocaron gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- No se tocó `raw/`.
+
+## Estado
+
+Dry-run conceptual v2: OK.
