@@ -346,3 +346,38 @@ La simulación confirmó que la skill distingue correctamente:
 ## Estado
 
 Dry-run conceptual v2: OK.
+
+### 2026-05-28 — github-pr-workflow-skill first real minimal test Fase 1 creada
+
+## Skill usada
+
+- `skills/github-pr-workflow/SKILL.md`
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-first-real-test.md`
+
+## Tipo
+
+Registro de primera prueba real mínima, limitada a workspace.
+
+## Límites
+
+- Solo Fase 1 workspace.
+- Sin ejecutar Git.
+- Sin crear rama.
+- Sin copiar al repo limpio.
+- Sin secret scan real.
+- Sin commit.
+- Sin push.
+- Sin PR.
+- Sin merge.
+- Sin modificar la skill.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin tocar `raw/`.
+- Sin escribir fuera del proyecto.
+
+## Resultado
+
+Fase 1 creada y validada en workspace.

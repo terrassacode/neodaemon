@@ -21,6 +21,7 @@ Segundo ingest manual ejecutado.
 - `concepts/obsidian-operating-rules.md` — reglas operativas para usar Obsidian como visor/editor local sin romper aislamiento.
 - `concepts/github-pr-workflow-skill-design.md` — diseño de una skill local segura para asistir flujos GitHub PR manuales sin autopilot.
 - `concepts/github-pr-workflow-skill-dry-run-v2.md` — registro del dry-run conceptual v2 de la skill `github-pr-workflow`, validando separación entre workspace source, repo target y rutas Git relativas.
+- `concepts/github-pr-workflow-skill-first-real-test.md` — registro de la primera prueba real mínima de la skill `github-pr-workflow`, limitada a Fase 1 workspace.
 
 ## Fuentes registradas
 
@@ -36,4 +37,5 @@ Segundo ingest manual ejecutado.
 - Revisar la nota conceptual `obsidian-operating-rules.md` mediante lint manual.
 - Revisar la nota conceptual `github-pr-workflow-skill-design.md` mediante lint manual.
 - Revisar la nota conceptual `github-pr-workflow-skill-dry-run-v2.md` mediante lint manual.
+- Validar la Fase 1 de `github-pr-workflow-skill-first-real-test.md`.
 - Definir próxima fuente no sensible.
