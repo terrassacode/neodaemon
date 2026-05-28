@@ -236,3 +236,36 @@ Obsidian queda conectado como vault local para visualizar y editar Markdown dent
 ## Estado
 
 Obsidian vault local: OK.
+
+### 2026-05-28 — Nota conceptual obsidian-operating-rules creada
+
+## Fuentes wiki usadas
+
+- `README.md`
+- `NEODAEMON_WIKI.md`
+- `wiki/log.md`
+- `wiki/concepts/project-core-boundary.md`
+
+## Nota creada
+
+- `wiki/concepts/obsidian-operating-rules.md`
+
+## Tipo
+
+Nota conceptual operativa.
+
+## Límites
+
+- No se leyó `raw/`.
+- No se creó fuente nueva.
+- Sin APIs externas.
+- Sin scripts globales.
+- Sin dependencias.
+- Sin instalar plugins.
+- Sin Obsidian Sync.
+- Sin tocar gateway, auth ni tokens.
+- Sin escribir fuera del proyecto.
+
+## Resultado esperado
+
+Definir reglas claras para usar Obsidian como visor/editor Markdown local sin romper aislamiento, trazabilidad ni seguridad.
