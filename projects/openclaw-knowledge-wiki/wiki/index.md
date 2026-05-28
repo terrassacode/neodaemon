@@ -23,6 +23,7 @@ Segundo ingest manual ejecutado.
 - `concepts/github-pr-workflow-skill-dry-run-v2.md` — registro del dry-run conceptual v2 de la skill `github-pr-workflow`, validando separación entre workspace source, repo target y rutas Git relativas.
 - `concepts/github-pr-workflow-skill-first-real-test.md` — registro de la primera prueba real mínima de la skill `github-pr-workflow`, limitada a Fase 1 workspace.
 - `concepts/github-pr-workflow-runner-design.md` — diseño técnico corregido del runner `github_pr_workflow_runner.py` para automatización 100% controlada de `DOCS_LOW_RISK`.
+- `concepts/python-code-self-check-rule.md` — regla obligatoria `SELF_CHECK_PYTHON` para revisar código Python antes de proponerlo o crearlo.
 
 ## Fuentes registradas
 
@@ -40,4 +41,5 @@ Segundo ingest manual ejecutado.
 - Revisar la nota conceptual `github-pr-workflow-skill-dry-run-v2.md` mediante lint manual.
 - Validar la Fase 1 de `github-pr-workflow-skill-first-real-test.md`.
 - Revisar la nota conceptual `github-pr-workflow-runner-design.md` mediante lint manual.
+- Revisar la nota conceptual `python-code-self-check-rule.md` mediante lint manual.
 - Definir próxima fuente no sensible.
