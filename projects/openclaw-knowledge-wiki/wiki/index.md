@@ -25,6 +25,7 @@ Segundo ingest manual ejecutado.
 - `concepts/github-pr-workflow-runner-design.md` — diseño técnico corregido del runner `github_pr_workflow_runner.py` para automatización 100% controlada de `DOCS_LOW_RISK`.
 - `concepts/python-code-self-check-rule.md` — regla obligatoria `SELF_CHECK_PYTHON` para revisar código Python antes de proponerlo o crearlo.
 - `concepts/github-pr-workflow-runner-v0-2-copy-plan.md` — plan técnico obligatorio para implementar `copy` controlado con snapshot, copy atómico y revalidación en runner v0.2.
+- `concepts/design-doc-check-rule.md` — regla obligatoria `DESIGN_DOC_CHECK` para revisar calidad documental, evidencia, contradicciones, límites y ejecución encubierta antes de versionar diseños técnicos.
 
 ## Fuentes registradas
 
