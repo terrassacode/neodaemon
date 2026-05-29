@@ -29,6 +29,7 @@ Segundo ingest manual ejecutado.
 - `concepts/repo-root-inventory-and-risk-map.md` — mapa de inventario y riesgos de la raíz del repositorio, con dependencias confirmadas antes de cualquier reestructuración.
 - `concepts/root-api-backup-security-review.md` — revisión de seguridad pendiente sobre archivos API heredados en la raíz con posibles tokens hardcodeados.
 - `concepts/neodaemon-strategic-roadmap.md` — roadmap estratégico que redefine Neodaemon como operador confiable y separa razonamiento, gobernanza, automatización GitHub y profesionalización del repositorio.
+- `concepts/task-validator-roadmap.md` — roadmap operativo para convertir `TASK_VALIDATOR` en router de riesgo, con niveles de contexto, control de tokens, criterios de bloqueo y relación con el runner GitHub.
 
 ## Fuentes registradas
 
