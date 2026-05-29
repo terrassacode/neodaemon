@@ -571,3 +571,36 @@ No se modificaron servicios.
 La siguiente decisión debe tratarse como tarea de seguridad separada: rotación/externalización de token y decisión controlada sobre eliminación o conservación saneada de estos archivos.
 
 
+### 2026-05-29 — neodaemon-strategic-roadmap creada
+
+## Estado
+
+Roadmap estratégico creado.
+
+## Resumen
+
+Se documentó el roadmap estratégico de Neodaemon tras los PRs #21 a #27.
+
+La decisión principal registrada es que el objetivo del proyecto no es simplemente automatizar GitHub. GitHub automation queda definido como un caso de uso controlado para desarrollar el razonador operativo de Neodaemon.
+
+El roadmap separa:
+
+- observabilidad;
+- gobernanza;
+- memoria de decisiones;
+- motor de razonamiento operativo;
+- automatización GitHub segura;
+- profesionalización del repositorio;
+- evolución hacia Trusted Operator.
+
+## Resultado
+
+El documento establece que la prioridad del proyecto debe ser mejorar la capacidad de Neodaemon para razonar, justificar, recordar y bloquear antes de ampliar la automatización.
+
+No se modificó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+
