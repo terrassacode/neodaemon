@@ -539,4 +539,35 @@ La raíz requiere análisis previo antes de cualquier limpieza o reorganización
 
 Se establece como regla que ningún archivo con dependencias activas confirmadas debe moverse sin trazado y validación previa.
 
+### 2026-05-29 — root-api-backup-security-review creada
+
+## Estado
+
+Revisión pendiente.
+
+## Resumen
+
+Se documentó una revisión de seguridad pendiente sobre archivos API heredados ubicados en la raíz del repositorio.
+
+Los archivos revisados son:
+
+- `api.py.backup-token`
+- `api.py.save`
+- `api.py.stable`
+- `api_broken.py`
+
+La auditoría inicial indica que no tienen referencias activas fuera de la documentación de riesgo, pero contienen referencias a `API_TOKEN` y no son duplicados triviales de `api.py`.
+
+## Resultado
+
+No se ejecutó limpieza.
+
+No se borraron archivos.
+
+No se modificó código.
+
+No se modificaron servicios.
+
+La siguiente decisión debe tratarse como tarea de seguridad separada: rotación/externalización de token y decisión controlada sobre eliminación o conservación saneada de estos archivos.
+
 
