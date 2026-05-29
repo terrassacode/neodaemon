@@ -26,6 +26,7 @@ Segundo ingest manual ejecutado.
 - `concepts/python-code-self-check-rule.md` — regla obligatoria `SELF_CHECK_PYTHON` para revisar código Python antes de proponerlo o crearlo.
 - `concepts/github-pr-workflow-runner-v0-2-copy-plan.md` — plan técnico obligatorio para implementar `copy` controlado con snapshot, copy atómico y revalidación en runner v0.2.
 - `concepts/design-doc-check-rule.md` — regla obligatoria `DESIGN_DOC_CHECK` para revisar calidad documental, evidencia, contradicciones, límites y ejecución encubierta antes de versionar diseños técnicos.
+- `concepts/repo-root-inventory-and-risk-map.md` — mapa de inventario y riesgos de la raíz del repositorio, con dependencias confirmadas antes de cualquier reestructuración.
 
 ## Fuentes registradas
 

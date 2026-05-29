@@ -518,3 +518,25 @@ Establecer `DESIGN_DOC_CHECK` como regla obligatoria para revisar calidad docume
 ## Estado
 
 Regla creada.
+
+### 2026-05-29 — repo-root-inventory-and-risk-map creada
+
+## Estado
+
+Mapa de riesgo creado.
+
+## Resumen
+
+Se documentó un inventario inicial de la raíz del repositorio y un mapa de riesgos para futuras reestructuraciones.
+
+La auditoría confirmó dependencias activas mediante rutas absolutas usadas por systemd, scripts operativos y componentes de OpenClaw.
+
+No se realizaron movimientos, borrados ni cambios de configuración.
+
+## Resultado
+
+La raíz requiere análisis previo antes de cualquier limpieza o reorganización.
+
+Se establece como regla que ningún archivo con dependencias activas confirmadas debe moverse sin trazado y validación previa.
+
+
