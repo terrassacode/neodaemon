@@ -491,3 +491,30 @@ Documenta criterios obligatorios para implementar `copy` automático controlado 
 ## Estado
 
 Plan creado.
+
+### 2026-05-29 — design-doc-check-rule creada
+
+## Tipo
+
+Regla documental obligatoria.
+
+## Nota creada
+
+- `wiki/concepts/design-doc-check-rule.md`
+
+## Límites
+
+- No se creó código Python.
+- No se modificó runner.
+- No se modificó policy.
+- No se ejecutó Git como parte de la regla.
+- No se tocó `raw/`.
+- No se tocó gateway, auth, tokens, systemd, `.env` ni logs crudos.
+
+## Resultado esperado
+
+Establecer `DESIGN_DOC_CHECK` como regla obligatoria para revisar calidad documental, evidencia, contradicciones, límites, criterios de bloqueo, rollback/recovery, testabilidad y ejecución encubierta antes de versionar diseños técnicos.
+
+## Estado
+
+Regla creada.
