@@ -30,6 +30,7 @@ Segundo ingest manual ejecutado.
 - `concepts/root-api-backup-security-review.md` — revisión de seguridad pendiente sobre archivos API heredados en la raíz con posibles tokens hardcodeados.
 - `concepts/neodaemon-strategic-roadmap.md` — roadmap estratégico que redefine Neodaemon como operador confiable y separa razonamiento, gobernanza, automatización GitHub y profesionalización del repositorio.
 - `concepts/task-validator-roadmap.md` — roadmap operativo para convertir `TASK_VALIDATOR` en router de riesgo, con niveles de contexto, control de tokens, criterios de bloqueo y relación con el runner GitHub.
+- `concepts/dependency-checker-roadmap.md` — roadmap para convertir `DEPENDENCY_CHECKER` en analizador de impacto con modos TARGET/MAP, niveles D0-D3, clasificación de referencias y control de contexto.
 
 ## Fuentes registradas
 
