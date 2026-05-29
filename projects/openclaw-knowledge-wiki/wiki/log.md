@@ -679,4 +679,47 @@ No se ejecutó automatización Git.
 
 La siguiente tarea recomendada es definir la especificación operativa de `DEPENDENCY_CHECKER` v0.
 
+### 2026-05-29 — context-budget-rate-limit-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap para gestionar consumo de contexto, tokens, peticiones y rate limits en Neodaemon.
+
+El documento introduce la idea de que el contexto es un recurso limitado que debe gestionarse mediante presupuestos operativos y observabilidad.
+
+Incluye:
+
+- métricas de observabilidad;
+- categorías de consumo;
+- presupuesto de contexto;
+- presupuesto de peticiones;
+- presupuesto de retries;
+- model invocation budget;
+- context compaction;
+- canonical summaries;
+- clasificación de rate limits;
+- indicadores operativos;
+- relación con `TASK_VALIDATOR`;
+- relación con `DEPENDENCY_CHECKER`;
+- roadmap de implementación;
+- tests futuros.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificó infraestructura.
+
+No se modificó OAuth.
+
+No se ejecutó automatización.
+
+La siguiente tarea recomendada es definir el flujo completo de decisión de Neodaemon respetando los presupuestos establecidos en este roadmap.
+
 

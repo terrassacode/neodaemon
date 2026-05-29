@@ -31,6 +31,7 @@ Segundo ingest manual ejecutado.
 - `concepts/neodaemon-strategic-roadmap.md` — roadmap estratégico que redefine Neodaemon como operador confiable y separa razonamiento, gobernanza, automatización GitHub y profesionalización del repositorio.
 - `concepts/task-validator-roadmap.md` — roadmap operativo para convertir `TASK_VALIDATOR` en router de riesgo, con niveles de contexto, control de tokens, criterios de bloqueo y relación con el runner GitHub.
 - `concepts/dependency-checker-roadmap.md` — roadmap para convertir `DEPENDENCY_CHECKER` en analizador de impacto con modos TARGET/MAP, niveles D0-D3, clasificación de referencias y control de contexto.
+- `concepts/context-budget-rate-limit-roadmap.md` — roadmap para observabilidad, presupuestos de contexto, control de rate limits, compresión de contexto y eficiencia operativa.
 
 ## Fuentes registradas
 
