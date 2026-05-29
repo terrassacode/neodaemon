@@ -640,3 +640,43 @@ No se modificaron servicios.
 No se ejecutó automatización Git.
 
 La siguiente tarea recomendada es convertir este roadmap en una especificación `TASK_VALIDATOR` v0.1 conservadora y bloqueante por defecto.
+
+### 2026-05-29 — dependency-checker-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap operativo para convertir `DEPENDENCY_CHECKER` en el analizador de impacto de Neodaemon.
+
+El documento define que `DEPENDENCY_CHECKER` no debe ser un buscador global del repositorio ni un dump masivo de grep, sino una herramienta para responder:
+
+Si modifico X, ¿qué podría romper?
+
+Incluye:
+
+- relación con `TASK_VALIDATOR`;
+- relación con repo hygiene;
+- modos `TARGET` y `MAP`;
+- niveles de análisis D0/D1/D2/D3;
+- estrategia de consumo de tokens;
+- formato obligatorio de salida;
+- clasificación de referencias runtime/documentation/historical;
+- gestión de incertidumbre mediante `unknowns`;
+- límite de referencias;
+- criterios de revisión y bloqueo;
+- roadmap de implementación.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+La siguiente tarea recomendada es definir la especificación operativa de `DEPENDENCY_CHECKER` v0.
+
+
