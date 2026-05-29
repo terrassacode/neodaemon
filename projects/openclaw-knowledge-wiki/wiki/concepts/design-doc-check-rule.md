@@ -65,7 +65,7 @@ DESIGN_DOC_CHECK:
 - implementation_claims: OK/ERROR
 - safe_to_execute: OK/ERROR
 - result: PASS/BLOCK
-
+```
 ## Criterios de bloqueo
 
 La revisión debe devolver `result: BLOCK` si ocurre cualquiera de estos casos:
@@ -79,6 +79,7 @@ La revisión debe devolver `result: BLOCK` si ocurre cualquiera de estos casos:
 - el documento propone acciones no autorizadas;
 - el estado declarado contradice las acciones propuestas;
 - no existe forma razonable de validar el resultado.
+
 
 ## Prohibiciones explícitas
 
