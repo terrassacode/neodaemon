@@ -604,3 +604,39 @@ No se modificaron servicios.
 No se ejecutó automatización Git.
 
 
+### 2026-05-29 — task-validator-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap operativo para convertir `TASK_VALIDATOR` en el primer componente formal del razonador operativo de Neodaemon.
+
+El documento define `TASK_VALIDATOR` como router de riesgo, no como lector masivo de contexto.
+
+Incluye:
+
+- inputs obligatorios;
+- formato obligatorio de salida;
+- niveles de riesgo;
+- estrategia de consumo de tokens;
+- niveles de contexto L0/L1/L2/L3;
+- criterios de bloqueo;
+- relación con `DESIGN_DOC_CHECK`;
+- relación con `SELF_CHECK_PYTHON`;
+- relación con `DEPENDENCY_CHECKER`;
+- relación con el runner GitHub;
+- roadmap de implementación;
+- tests futuros.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+La siguiente tarea recomendada es convertir este roadmap en una especificación `TASK_VALIDATOR` v0.1 conservadora y bloqueante por defecto.
