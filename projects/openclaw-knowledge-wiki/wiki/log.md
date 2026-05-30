@@ -723,3 +723,45 @@ No se ejecutó automatización.
 La siguiente tarea recomendada es definir el flujo completo de decisión de Neodaemon respetando los presupuestos establecidos en este roadmap.
 
 
+### 2026-05-29 — neodaemon-decision-flow-and-trace-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el flujo mínimo de decisión de Neodaemon y la traza visible asociada a cada decisión.
+
+El documento integra:
+
+- CONTEXT_BUDGET;
+- DEPENDENCY_CHECKER;
+- TASK_VALIDATOR;
+- RUNNER.
+
+Además define:
+
+- flujo mínimo de decisión;
+- carga de contexto;
+- ciclo de vida de canonical summaries;
+- reglas de no recursión;
+- reglas de ejecución del runner;
+- formato de `DECISION_TRACE`;
+- auditoría visible.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificó infraestructura.
+
+No se modificó OAuth.
+
+No se ejecutó automatización.
+
+La siguiente tarea recomendada es definir las especificaciones operativas v0.1 de los componentes descritos en este roadmap.
+
+
