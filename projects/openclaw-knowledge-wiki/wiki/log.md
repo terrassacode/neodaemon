@@ -765,3 +765,50 @@ No se ejecutó automatización.
 La siguiente tarea recomendada es definir las especificaciones operativas v0.1 de los componentes descritos en este roadmap.
 
 
+### 2026-05-30 — observability-v0-1-context-usage-plan creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó una estrategia mínima de observabilidad centrada en carga de contexto y no en consumo de tokens.
+
+La propuesta parte de evidencia observada en el sistema:
+
+- sesiones acumuladas;
+- backups y checkpoints;
+- lecturas repetidas;
+- ausencia de métricas fiables de carga de contexto.
+
+## Hallazgo principal
+
+No existe evidencia suficiente para afirmar consumo excesivo de tokens.
+
+Sí existe evidencia suficiente para justificar observabilidad de contexto.
+
+## Métricas propuestas
+
+- context_load_frequency;
+- summary_hit_rate;
+- context_saved_estimate;
+- decision_correlation.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificaron logs.
+
+No se eliminaron sesiones.
+
+No se modificó la retención.
+
+## Próximo paso
+
+Definir una especificación operativa mínima antes de cualquier implementación.
+
+
