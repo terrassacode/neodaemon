@@ -33,6 +33,7 @@ Segundo ingest manual ejecutado.
 - `concepts/dependency-checker-roadmap.md` — roadmap para convertir `DEPENDENCY_CHECKER` en analizador de impacto con modos TARGET/MAP, niveles D0-D3, clasificación de referencias y control de contexto.
 - `concepts/context-budget-rate-limit-roadmap.md` — roadmap para observabilidad, presupuestos de contexto, control de rate limits, compresión de contexto y eficiencia operativa.
 - `concepts/neodaemon-decision-flow-and-trace-roadmap.md` — roadmap compacto del flujo de decisión de Neodaemon, con carga de contexto, ciclo de summaries, uso de validadores, runner y trazabilidad visible mediante `DECISION_TRACE`.
+- `concepts/observability-v0-1-context-usage-plan.md` — plan de observabilidad para medir carga de contexto, reutilización de summaries, correlación con decisiones y detección de redundancias.
 
 ## Fuentes registradas
 
