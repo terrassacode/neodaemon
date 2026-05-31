@@ -63,6 +63,8 @@ def main():
     latest = None
 
     files_read = 0
+    files_skipped_old = 0
+    files_error = 0
     lines_seen = 0
 
     if SOURCE_DIR.exists():
@@ -70,44 +72,58 @@ def main():
             if is_excluded(path):
                 continue
 
+            try:
+                mtime = datetime.fromtimestamp(path.stat().st_mtime, timezone.utc)
+            except Exception:
+                files_error += 1
+                continue
+
+            if mtime < window_24h_start:
+                files_skipped_old += 1
+                continue
+
             files_read += 1
 
-            with path.open("r", encoding="utf-8", errors="ignore") as f:
-                for line in f:
-                    if not line.strip():
-                        continue
+            try:
+                with path.open("r", encoding="utf-8", errors="ignore") as f:
+                    for line in f:
+                        if not line.strip():
+                            continue
 
-                    lines_seen += 1
+                        lines_seen += 1
 
-                    try:
-                        entry = json.loads(line)
-                    except Exception:
-                        continue
+                        try:
+                            entry = json.loads(line)
+                        except Exception:
+                            continue
 
-                    usage = get_usage(entry)
-                    if not usage:
-                        continue
+                        usage = get_usage(entry)
+                        if not usage:
+                            continue
 
-                    ts = get_timestamp(entry)
+                        ts = get_timestamp(entry)
 
-                    add_usage(total, usage)
+                        add_usage(total, usage)
 
-                    if ts and ts >= window_24h_start:
-                        add_usage(last_24h, usage)
+                        if ts and ts >= window_24h_start:
+                            add_usage(last_24h, usage)
 
-                    if ts and ts >= window_60m_start:
-                        add_usage(last_60m, usage)
+                        if ts and ts >= window_60m_start:
+                            add_usage(last_60m, usage)
 
-                    if ts:
-                        if latest is None or ts > latest["timestamp"]:
-                            b = empty_bucket()
-                            add_usage(b, usage)
-                            latest = {
-                                "timestamp": ts,
-                                "input_tokens": b["input_tokens"],
-                                "output_tokens": b["output_tokens"],
-                                "total_tokens": b["total_tokens"]
-                            }
+                        if ts:
+                            if latest is None or ts > latest["timestamp"]:
+                                b = empty_bucket()
+                                add_usage(b, usage)
+                                latest = {
+                                    "timestamp": ts,
+                                    "input_tokens": b["input_tokens"],
+                                    "output_tokens": b["output_tokens"],
+                                    "total_tokens": b["total_tokens"]
+                                }
+            except Exception:
+                files_error += 1
+                continue
 
     data = {
         "updated_at": now.isoformat(),
@@ -123,6 +139,8 @@ def main():
         "quality": {
             "source": str(SOURCE_DIR),
             "files_read": files_read,
+            "files_skipped_old": files_skipped_old,
+            "files_error": files_error,
             "lines_seen": lines_seen,
             "window_minutes": WINDOW_MINUTES,
             "window_24h": WINDOW_24H
@@ -134,4 +152,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
