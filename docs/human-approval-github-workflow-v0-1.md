@@ -380,3 +380,63 @@ Al terminar una feature, Neodaemon debe responder FEATURE_RESULT con:
 - Git status.
 - Pendiente de Albert.
 - Resultado: OK, PARCIAL, BLOQUEADO o CANCELADO.
+
+---
+
+## Ejemplo práctico — cambio documental de bajo riesgo
+
+Este ejemplo muestra cómo aplicar el flujo a una modificación simple de documentación.
+
+### Situación
+
+Albert pide añadir una pequeña aclaración a un documento existente.
+
+Archivo previsto:
+
+- docs/human-approval-github-workflow-v0-1.md
+
+Tipo de cambio:
+
+- documentación
+
+Riesgo estimado:
+
+- bajo
+
+### Flujo esperado
+
+Neodaemon presenta FEATURE_PROPOSAL indicando:
+
+- objetivo del cambio;
+- rama propuesta;
+- único archivo afectado;
+- validaciones documentales;
+- acciones incluidas en OK FEATURE;
+- acciones excluidas, como push, PR y merge.
+
+Si Albert responde OK FEATURE, Neodaemon puede:
+
+- crear rama local;
+- modificar solo el archivo previsto;
+- revisar el diff;
+- comprobar que no hay secretos;
+- usar git add solo sobre el archivo concreto;
+- crear commit local.
+
+Cuando el commit local está listo, Neodaemon presenta FEATURE_READY_FOR_GITHUB.
+
+Si Albert responde OK GITHUB, Neodaemon puede:
+
+- hacer push de la rama;
+- abrir el PR.
+
+El merge no queda autorizado por OK GITHUB. Albert lo realiza manualmente en GitHub o mediante aprobación especial futura.
+
+### Resultado esperado
+
+El cambio queda preparado con un máximo de dos interacciones humanas:
+
+1. OK FEATURE.
+2. OK GITHUB.
+
+Albert valida la decisión operativa. Neodaemon valida la parte técnica.
