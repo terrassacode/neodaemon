@@ -13,3 +13,6 @@ snapshots/
 backups/
 *.bak
 dashboard-v2/data/token_dashboard_v0_1.json
+
+# Generated branch review reports
+reports/unmerged_branches_review.md
