@@ -12,3 +12,4 @@ logs/
 snapshots/
 backups/
 *.bak
+dashboard-v2/data/token_dashboard_v0_1.json
