@@ -236,3 +236,579 @@ Obsidian queda conectado como vault local para visualizar y editar Markdown dent
 ## Estado
 
 Obsidian vault local: OK.
+
+### 2026-05-28 — Nota conceptual obsidian-operating-rules creada
+
+## Fuentes wiki usadas
+
+- `README.md`
+- `NEODAEMON_WIKI.md`
+- `wiki/log.md`
+- `wiki/concepts/project-core-boundary.md`
+
+## Nota creada
+
+- `wiki/concepts/obsidian-operating-rules.md`
+
+## Tipo
+
+Nota conceptual operativa.
+
+## Límites
+
+- No se leyó `raw/`.
+- No se creó fuente nueva.
+- Sin APIs externas.
+- Sin scripts globales.
+- Sin dependencias.
+- Sin instalar plugins.
+- Sin Obsidian Sync.
+- Sin tocar gateway, auth ni tokens.
+- Sin escribir fuera del proyecto.
+
+## Resultado esperado
+
+Definir reglas claras para usar Obsidian como visor/editor Markdown local sin romper aislamiento, trazabilidad ni seguridad.
+
+### 2026-05-28 — github-pr-workflow-skill-design creada
+
+## Fuentes wiki usadas
+
+- `wiki/concepts/project-core-boundary.md`
+- `wiki/concepts/obsidian-operating-rules.md`
+- reglas operativas confirmadas por Albert para el diseño GitHub PR workflow skill
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-design.md`
+
+## Tipo
+
+Nota conceptual de diseño operativo.
+
+## Límites
+
+- No se leyó `raw/`.
+- No se creó skill real.
+- Sin ejecutar Git.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth ni tokens.
+- Sin tocar systemd.
+- Sin tocar `.env`.
+- Sin leer logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Resultado esperado
+
+Documentar un MVP seguro para asistir flujos GitHub PR manuales sin autopilot, con allowlist, bloqueo por defecto, secret scan silencioso, separación de fases y merge automático prohibido.
+
+### 2026-05-28 — github-pr-workflow-skill dry-run v2 documentado
+
+## Skill evaluada
+
+- `skills/github-pr-workflow/SKILL.md`
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-dry-run-v2.md`
+
+## Tipo
+
+Registro conceptual de dry-run.
+
+## Resultado
+
+APROBADO.
+
+## Validación conceptual
+
+La simulación confirmó que la skill distingue correctamente:
+
+- workspace source;
+- repo target;
+- rutas Git relativas.
+
+## Límites
+
+- No se ejecutó Git.
+- No se creó rama.
+- No se copiaron archivos.
+- No se hizo secret scan real.
+- No hubo commit.
+- No hubo push.
+- No hubo PR.
+- No hubo merge.
+- No se instaló la skill.
+- No se tocó `~/.openclaw/skills`.
+- No se tocaron gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- No se tocó `raw/`.
+
+## Estado
+
+Dry-run conceptual v2: OK.
+
+### 2026-05-28 — github-pr-workflow-skill first real minimal test Fase 1 creada
+
+## Skill usada
+
+- `skills/github-pr-workflow/SKILL.md`
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-skill-first-real-test.md`
+
+## Tipo
+
+Registro de primera prueba real mínima, limitada a workspace.
+
+## Límites
+
+- Solo Fase 1 workspace.
+- Sin ejecutar Git.
+- Sin crear rama.
+- Sin copiar al repo limpio.
+- Sin secret scan real.
+- Sin commit.
+- Sin push.
+- Sin PR.
+- Sin merge.
+- Sin modificar la skill.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin tocar `raw/`.
+- Sin escribir fuera del proyecto.
+
+## Resultado
+
+Fase 1 creada y validada en workspace.
+
+### 2026-05-28 — github-pr-workflow-runner-design creada
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-runner-design.md`
+
+## Tipo
+
+Diseño técnico corregido para runner de automatización controlada.
+
+## Alcance
+
+Diseño de `github_pr_workflow_runner.py` para evolución gradual hacia automatización completa de `DOCS_LOW_RISK`.
+
+## Límites
+
+- No se creó runner real.
+- No se creó policy real.
+- No se creó `.gitignore`.
+- No se creó `run_state`.
+- Sin ejecutar Git.
+- Sin instalar dependencias.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin tocar `raw/`.
+- Sin escribir fuera del proyecto.
+
+## Correcciones incorporadas
+
+- Ruta `automation/github_pr_workflow_runner.py`, no `tools/`.
+- Policy en `automation/policies/github_pr_workflow.policy.yml`.
+- `automation/run_state/` no versionado por defecto.
+- v0.1 solo `plan/check`.
+- Sin comando `merge` en v0.1.
+- Approval mediante `--approval-file` o `--confirm-risk`, no tokens secretos.
+- Checks de symlink, realpath y path traversal.
+- Snapshot antes de copiar.
+- Branch existente bloquea salvo recovery explícito.
+- Revalidación post-copy.
+- Bloqueo de binarios, encoding no UTF-8 y tamaños excesivos.
+- Aclarado que patrones `**/*token*` bloquean nombres de archivo; contenido tipo `token=` va por secret scan silencioso.
+- Aclarado que `allow_auto_commit`, `allow_auto_push` y `allow_auto_pr` son objetivo de madurez, no comportamiento activo en v0.1.
+
+## Estado
+
+Diseño técnico corregido: creado.
+
+### 2026-05-28 — python-code-self-check-rule creada
+
+## Nota creada
+
+- `wiki/concepts/python-code-self-check-rule.md`
+
+## Tipo
+
+Regla operativa para propuestas y cambios Python.
+
+## Contenido
+
+Documenta `SELF_CHECK_PYTHON` como revisión obligatoria antes de proponer o crear código Python.
+
+## Límites
+
+- No se creó código Python.
+- No se ejecutaron tests.
+- Sin ejecutar Git.
+- Sin tocar runner.
+- Sin tocar policy.
+- Sin tocar `raw/`.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Estado
+
+Regla creada.
+
+### 2026-05-28 — github-pr-workflow-runner-v0-2-copy-plan creada
+
+## Nota creada
+
+- `wiki/concepts/github-pr-workflow-runner-v0-2-copy-plan.md`
+
+## Tipo
+
+Plan técnico previo a implementación.
+
+## Contenido
+
+Documenta criterios obligatorios para implementar `copy` automático controlado en `github_pr_workflow_runner.py` v0.2, incluyendo snapshot, copy atómico, hash source before/after, permisos no ejecutables, validación de tamaño antes de leer contenido completo, revalidación, symlink/path traversal checks, bloqueo de rutas prohibidas y rollback sin `git reset --hard`.
+
+## Límites
+
+- No se creó código Python.
+- No se modificó runner.
+- No se modificó policy.
+- No se creó `run_state`.
+- No se copiaron archivos reales.
+- Sin ejecutar Git.
+- Sin tocar repo limpio.
+- Sin commit, push, PR ni merge.
+- Sin tocar `raw/`.
+- Sin tocar `~/.openclaw/skills`.
+- Sin tocar gateway, auth, tokens, systemd, `.env` ni logs crudos.
+- Sin escribir fuera del proyecto.
+
+## Estado
+
+Plan creado.
+
+### 2026-05-29 — design-doc-check-rule creada
+
+## Tipo
+
+Regla documental obligatoria.
+
+## Nota creada
+
+- `wiki/concepts/design-doc-check-rule.md`
+
+## Límites
+
+- No se creó código Python.
+- No se modificó runner.
+- No se modificó policy.
+- No se ejecutó Git como parte de la regla.
+- No se tocó `raw/`.
+- No se tocó gateway, auth, tokens, systemd, `.env` ni logs crudos.
+
+## Resultado esperado
+
+Establecer `DESIGN_DOC_CHECK` como regla obligatoria para revisar calidad documental, evidencia, contradicciones, límites, criterios de bloqueo, rollback/recovery, testabilidad y ejecución encubierta antes de versionar diseños técnicos.
+
+## Estado
+
+Regla creada.
+
+### 2026-05-29 — repo-root-inventory-and-risk-map creada
+
+## Estado
+
+Mapa de riesgo creado.
+
+## Resumen
+
+Se documentó un inventario inicial de la raíz del repositorio y un mapa de riesgos para futuras reestructuraciones.
+
+La auditoría confirmó dependencias activas mediante rutas absolutas usadas por systemd, scripts operativos y componentes de OpenClaw.
+
+No se realizaron movimientos, borrados ni cambios de configuración.
+
+## Resultado
+
+La raíz requiere análisis previo antes de cualquier limpieza o reorganización.
+
+Se establece como regla que ningún archivo con dependencias activas confirmadas debe moverse sin trazado y validación previa.
+
+### 2026-05-29 — root-api-backup-security-review creada
+
+## Estado
+
+Revisión pendiente.
+
+## Resumen
+
+Se documentó una revisión de seguridad pendiente sobre archivos API heredados ubicados en la raíz del repositorio.
+
+Los archivos revisados son:
+
+- `api.py.backup-token`
+- `api.py.save`
+- `api.py.stable`
+- `api_broken.py`
+
+La auditoría inicial indica que no tienen referencias activas fuera de la documentación de riesgo, pero contienen referencias a `API_TOKEN` y no son duplicados triviales de `api.py`.
+
+## Resultado
+
+No se ejecutó limpieza.
+
+No se borraron archivos.
+
+No se modificó código.
+
+No se modificaron servicios.
+
+La siguiente decisión debe tratarse como tarea de seguridad separada: rotación/externalización de token y decisión controlada sobre eliminación o conservación saneada de estos archivos.
+
+
+### 2026-05-29 — neodaemon-strategic-roadmap creada
+
+## Estado
+
+Roadmap estratégico creado.
+
+## Resumen
+
+Se documentó el roadmap estratégico de Neodaemon tras los PRs #21 a #27.
+
+La decisión principal registrada es que el objetivo del proyecto no es simplemente automatizar GitHub. GitHub automation queda definido como un caso de uso controlado para desarrollar el razonador operativo de Neodaemon.
+
+El roadmap separa:
+
+- observabilidad;
+- gobernanza;
+- memoria de decisiones;
+- motor de razonamiento operativo;
+- automatización GitHub segura;
+- profesionalización del repositorio;
+- evolución hacia Trusted Operator.
+
+## Resultado
+
+El documento establece que la prioridad del proyecto debe ser mejorar la capacidad de Neodaemon para razonar, justificar, recordar y bloquear antes de ampliar la automatización.
+
+No se modificó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+
+### 2026-05-29 — task-validator-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap operativo para convertir `TASK_VALIDATOR` en el primer componente formal del razonador operativo de Neodaemon.
+
+El documento define `TASK_VALIDATOR` como router de riesgo, no como lector masivo de contexto.
+
+Incluye:
+
+- inputs obligatorios;
+- formato obligatorio de salida;
+- niveles de riesgo;
+- estrategia de consumo de tokens;
+- niveles de contexto L0/L1/L2/L3;
+- criterios de bloqueo;
+- relación con `DESIGN_DOC_CHECK`;
+- relación con `SELF_CHECK_PYTHON`;
+- relación con `DEPENDENCY_CHECKER`;
+- relación con el runner GitHub;
+- roadmap de implementación;
+- tests futuros.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+La siguiente tarea recomendada es convertir este roadmap en una especificación `TASK_VALIDATOR` v0.1 conservadora y bloqueante por defecto.
+
+### 2026-05-29 — dependency-checker-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap operativo para convertir `DEPENDENCY_CHECKER` en el analizador de impacto de Neodaemon.
+
+El documento define que `DEPENDENCY_CHECKER` no debe ser un buscador global del repositorio ni un dump masivo de grep, sino una herramienta para responder:
+
+Si modifico X, ¿qué podría romper?
+
+Incluye:
+
+- relación con `TASK_VALIDATOR`;
+- relación con repo hygiene;
+- modos `TARGET` y `MAP`;
+- niveles de análisis D0/D1/D2/D3;
+- estrategia de consumo de tokens;
+- formato obligatorio de salida;
+- clasificación de referencias runtime/documentation/historical;
+- gestión de incertidumbre mediante `unknowns`;
+- límite de referencias;
+- criterios de revisión y bloqueo;
+- roadmap de implementación.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se ejecutó automatización Git.
+
+La siguiente tarea recomendada es definir la especificación operativa de `DEPENDENCY_CHECKER` v0.
+
+### 2026-05-29 — context-budget-rate-limit-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el roadmap para gestionar consumo de contexto, tokens, peticiones y rate limits en Neodaemon.
+
+El documento introduce la idea de que el contexto es un recurso limitado que debe gestionarse mediante presupuestos operativos y observabilidad.
+
+Incluye:
+
+- métricas de observabilidad;
+- categorías de consumo;
+- presupuesto de contexto;
+- presupuesto de peticiones;
+- presupuesto de retries;
+- model invocation budget;
+- context compaction;
+- canonical summaries;
+- clasificación de rate limits;
+- indicadores operativos;
+- relación con `TASK_VALIDATOR`;
+- relación con `DEPENDENCY_CHECKER`;
+- roadmap de implementación;
+- tests futuros.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificó infraestructura.
+
+No se modificó OAuth.
+
+No se ejecutó automatización.
+
+La siguiente tarea recomendada es definir el flujo completo de decisión de Neodaemon respetando los presupuestos establecidos en este roadmap.
+
+
+### 2026-05-29 — neodaemon-decision-flow-and-trace-roadmap creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó el flujo mínimo de decisión de Neodaemon y la traza visible asociada a cada decisión.
+
+El documento integra:
+
+- CONTEXT_BUDGET;
+- DEPENDENCY_CHECKER;
+- TASK_VALIDATOR;
+- RUNNER.
+
+Además define:
+
+- flujo mínimo de decisión;
+- carga de contexto;
+- ciclo de vida de canonical summaries;
+- reglas de no recursión;
+- reglas de ejecución del runner;
+- formato de `DECISION_TRACE`;
+- auditoría visible.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificó infraestructura.
+
+No se modificó OAuth.
+
+No se ejecutó automatización.
+
+La siguiente tarea recomendada es definir las especificaciones operativas v0.1 de los componentes descritos en este roadmap.
+
+
+### 2026-05-30 — observability-v0-1-context-usage-plan creada
+
+## Estado
+
+Roadmap creado.
+
+## Resumen
+
+Se documentó una estrategia mínima de observabilidad centrada en carga de contexto y no en consumo de tokens.
+
+La propuesta parte de evidencia observada en el sistema:
+
+- sesiones acumuladas;
+- backups y checkpoints;
+- lecturas repetidas;
+- ausencia de métricas fiables de carga de contexto.
+
+## Hallazgo principal
+
+No existe evidencia suficiente para afirmar consumo excesivo de tokens.
+
+Sí existe evidencia suficiente para justificar observabilidad de contexto.
+
+## Métricas propuestas
+
+- context_load_frequency;
+- summary_hit_rate;
+- context_saved_estimate;
+- decision_correlation.
+
+## Resultado
+
+No se implementó código.
+
+No se modificaron servicios.
+
+No se modificaron logs.
+
+No se eliminaron sesiones.
+
+No se modificó la retención.
+
+## Próximo paso
+
+Definir una especificación operativa mínima antes de cualquier implementación.
+
+
