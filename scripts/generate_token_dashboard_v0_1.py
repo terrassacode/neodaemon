@@ -38,14 +38,21 @@ def empty_bucket():
 def add_usage(bucket, usage):
     inp = usage.get("input") or usage.get("inputTokens") or 0
     out = usage.get("output") or usage.get("outputTokens") or 0
-    total = usage.get("totalTokens") or usage.get("total_tokens") or 0
+    raw_total = usage.get("totalTokens") or usage.get("total_tokens") or 0
 
     if not isinstance(inp, (int, float)):
         inp = 0
     if not isinstance(out, (int, float)):
         out = 0
-    if not isinstance(total, (int, float)):
-        total = 0
+    if not isinstance(raw_total, (int, float)):
+        raw_total = 0
+
+    # For the simple dashboard, total_tokens means visible input + output.
+    # Some providers include cacheRead/cacheWrite inside totalTokens, which would
+    # make total_tokens inconsistent with the displayed input/output counters.
+    total = int(inp) + int(out)
+    if total == 0:
+        total = int(raw_total)
 
     bucket["input_tokens"] += int(inp)
     bucket["output_tokens"] += int(out)
