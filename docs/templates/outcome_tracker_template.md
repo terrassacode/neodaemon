@@ -101,6 +101,7 @@ El sistema no debe aprender únicamente del resultado final.
 
 ```text
 npm build OK
+```
 
 no implica:
 

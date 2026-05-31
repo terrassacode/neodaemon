@@ -149,8 +149,9 @@ bajo | medio | alto
 
 ## Estado
 pending | executed | blocked | failed | completed | cancelled
+````
 
-##Ejemplo realista
+## Ejemplo realista
 
 # Decision Log — 20260527-0915-visualitzador-bloque2
 
