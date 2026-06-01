@@ -10,13 +10,26 @@ Clasificación según `docs/protected-zones-blacklist-v0-1.md`:
 SPECIAL_CONFIRMATION
 ```
 
-Este documento diseña un executor seguro para asistir el Human Approval GitHub Workflow. No implementa código.
+Este documento diseña un executor seguro para asistir el Human Approval GitHub Workflow.
+
+No implementa código.
 
 ## Objetivo
 
-Definir un executor local y restringido que permita a Neodaemon operar trabajo Git local de forma controlada, sin shell libre y respetando el flujo de aprobación humana.
+Definir un executor local, restringido y de solo lectura para inspeccionar estado Git sin shell libre y sin capacidad de modificar repositorios.
 
-El executor v0.1 debe permitir trabajo local bajo `OK FEATURE` o `CONFIRMACIÓN_ESPECIAL`, pero no debe publicar en GitHub.
+Executor v0.1 queda limitado a:
+
+```text
+inspector local read-only
+```
+
+No prepara ramas.  
+No escribe archivos.  
+No valida código.  
+No stagea archivos.  
+No crea commits.  
+No publica en GitHub.
 
 ## Documentos normativos
 
@@ -43,60 +56,22 @@ Albert valida decisiones; Neodaemon valida técnica; el executor limita ejecuci�
 
 El executor no decide por sí mismo.
 
-El executor solo ejecuta acciones permitidas, parametrizadas y validadas.
+El executor solo ejecuta acciones read-only permitidas, parametrizadas y validadas.
 
 ---
 
-## Alcance v0.1 — LOCAL ONLY
+## Alcance v0.1 — Inspector local read-only
 
-Executor v0.1 es estrictamente local.
+Executor v0.1 es estrictamente local y de solo lectura.
 
-Permitido:
-
-- status;
-- diff;
-- create branch;
-- validate;
-- stage explicit files;
-- commit.
-
-Prohibido en v0.1:
-
-- push;
-- PR;
-- `gh`;
-- auth;
-- tokens;
-- red;
-- APIs externas;
-- `curl`;
-- `wget`.
-
-Cualquier intento de añadir estas capacidades al v0.1 debe producir:
-
-```text
-FEATURE_BLOCKED
-```
-
-o requerir aprobación especial futura fuera de este documento.
-
----
-
-## Capacidades mínimas
-
-### Read-only permitidas sin interacción humana
-
-Las lecturas seguras no cuentan como interacción humana si se aplican sobre el repo permitido y rutas no sensibles:
+Permitido v0.1 únicamente:
 
 ```text
 status
+current-branch
 diff-stat
 diff-name-only
-diff
-current-branch
-log-oneline
 file-exists
-show-file-range
 ```
 
 Equivalencias permitidas:
@@ -104,60 +79,172 @@ Equivalencias permitidas:
 ```text
 git status --short
 git branch --show-current
-git log --oneline
 git diff --stat
 git diff --name-only
-git diff
-test -f <archivo_previsto>
-sed -n '<rango>p' <archivo_previsto>
-grep <patrón_seguro> <archivo_previsto>
+test -f <archivo_previsto_o_no_sensible>
 ```
 
-Restricciones:
+Todo lo que no aparece en esta lista queda prohibido en v0.1.
 
-- solo rutas previstas o no sensibles;
-- nunca sobre `.env`, logs, backups, snapshots, sessions, tokens, auth o credentials;
-- salida sanitizada si puede contener secretos;
-- sin pipes arbitrarios;
-- sin comandos compuestos.
+---
 
-### Escritura local permitida tras aprobación
+## Prohibido en v0.1
 
-Solo tras `OK FEATURE` o `CONFIRMACIÓN_ESPECIAL`, según clasificación:
+Quedan prohibidas explícitamente las siguientes capacidades:
 
 ```text
+diff completo
+log-oneline
+show-file-range
+grep
+sed
 create-branch
 write-planned-file
 validate-files
 stage-explicit-files
 commit-feature
+git checkout main
+git checkout -b
+git pull origin main
 ```
 
-Equivalencias permitidas:
+También queda prohibido:
 
 ```text
-git checkout main
-git pull origin main
-git checkout -b <branch>
-python3 -m py_compile <archivo.py>
-bash -n <archivo.sh>
-git add <archivo_concreto>
-git commit -m "<mensaje>"
+push
+PR
+gh
+auth
+tokens
+red
+APIs externas
+curl
+wget
+shell libre
+shell=True
+comandos compuestos
+pipes arbitrarios
+redirecciones arbitrarias
+backticks
+$()
 ```
 
-Cada acción debe validar rutas, estado Git y blacklist antes de ejecutarse.
+Cualquier intento de ejecutar o añadir estas capacidades al v0.1 debe producir:
+
+```text
+FEATURE_BLOCKED
+```
+
+---
+
+## LOCAL ONLY
+
+En v0.1, `LOCAL ONLY` significa:
+
+- sin red;
+- sin GitHub;
+- sin `gh`;
+- sin auth;
+- sin tokens;
+- sin APIs externas;
+- sin `curl`;
+- sin `wget`;
+- sin `git pull`;
+- sin `git fetch`;
+- sin `git push`.
+
+`main actualizado` no lo verifica ni lo ejecuta el executor v0.1.
+
+`main actualizado` pasa a ser una precondición externa verificada por host/humano antes de usar workflows posteriores.
+
+---
+
+## Fases previstas
+
+### v0.1 — Inspector local read-only
+
+Permitido:
+
+- `status`;
+- `current-branch`;
+- `diff-stat`;
+- `diff-name-only`;
+- `file-exists`.
+
+No modifica nada.
+
+### v0.2 — Branch/stage/commit local
+
+Diseño futuro.
+
+Podría estudiar, con aprobación especial separada:
+
+- create branch;
+- write planned file;
+- validate files;
+- stage explicit files;
+- commit local.
+
+No forma parte de v0.1.
+
+### v0.3 — GitHub / push / PR
+
+Diseño futuro.
+
+Podría estudiar, con aprobación especial separada:
+
+- push branch;
+- create PR.
+
+No forma parte de v0.1 ni v0.2.
+
+---
+
+## Metadata read vs content read
+
+### Metadata read permitido en v0.1
+
+V0.1 solo permite metadata Git o existencia de archivo:
+
+```text
+git status --short
+git branch --show-current
+git diff --stat
+git diff --name-only
+test -f <archivo_previsto_o_no_sensible>
+```
+
+### Content read bloqueado en v0.1
+
+V0.1 no permite leer contenido de archivos.
+
+Prohibido:
+
+```text
+git diff
+sed
+grep
+cat
+head
+tail
+show-file-range
+```
+
+Motivo: la lectura de contenido puede exponer secretos, prompts, respuestas, logs o datos sensibles.
+
+Si una tarea requiere leer contenido, queda fuera del executor v0.1 y debe pasar por revisión humana o mecanismo futuro separado.
 
 ---
 
 ## Repo Root Lock
 
-El executor debe operar solo dentro del repo aprobado.
+El executor debe operar solo
+
+dentro de repositorios incluidos explícitamente en allowlist.
 
 ### Allowed repositories
 
-El executor v0.1 solo puede operar sobre repositorios incluidos explícitamente en esta allowlist.
-
-Repositorios permitidos:
+Repositorios permitidos v0.1:
 
 ```text
 /openclaw/workspace/git_clean/neodaemon_repo
@@ -177,15 +264,19 @@ Motivo:
 repository_not_allowed
 ```
 
-Reglas:
+### Reglas de bloqueo de rutas
 
-1. Resolver `realpath` del repo root antes de cualquier acción.
-2. Resolver `realpath` de cada ruta objetivo.
-3. Bloquear cualquier ruta que escape del repo root.
-4. Bloquear symlinks que apunten fuera del repo root.
-5. Bloquear rutas absolutas no permitidas.
-6. Bloquear `..` si produce escape del repo.
-7. Bloquear operaciones si el repo root no coincide exactamente con el configurado.
+Antes de cualquier acción, el executor debe:
+
+1. Resolver `realpath` del repo root.
+2. Verificar identidad del repo root mediante comparación estable de path real e inode cuando esté disponible.
+3. Resolver `realpath` de cada ruta objetivo.
+4. Bloquear cualquier ruta que escape del repo root.
+5. Bloquear symlinks que apunten fuera del repo root.
+6. Bloquear rutas absolutas fuera del repo permitido.
+7. Bloquear `..` si produce escape del repo.
+8. Bloquear operaciones si el repo root no coincide exactamente con la allowlist.
+9. Fallar cerrado ante duda.
 
 Ante escape o duda:
 
@@ -201,90 +292,11 @@ repo_root_lock_violation
 
 ---
 
-## Output Size Guard
-
-El executor debe evitar generar o mostrar salidas excesivas.
-
-Motivo: diffs, logs o lecturas largas pueden consumir contexto excesivo o exponer información sensible.
-
-Límites v0.1 recomendados:
-
-```text
-max_stdout_bytes_per_command: 20000
-max_diff_files: 20
-max_diff_bytes: 50000
-max_file_read_bytes: 20000
-max_file_read_lines: 300
-```
-
-Reglas:
-
-- si la salida excede límite, truncar y marcar `truncated: true`;
-- si el diff excede el límite, bloquear antes de commit;
-- si hay más archivos modificados de los previstos, bloquear;
-- no imprimir contenido sensible aunque esté dentro del límite;
-- para archivos grandes, mostrar resumen metadata y pedir revisión especial.
-
-Bloqueo:
-
-```text
-FEATURE_BLOCKED
-```
-
-Motivo:
-
-```text
-output_size_guard_exceeded
-```
-
----
-
-## No Auto-Discovery
-
-El executor no debe descubrir automáticamente nuevos archivos para modificar, stagear o validar.
-
-Reglas:
-
-1. Los archivos modificables deben venir de `FEATURE_PROPOSAL`.
-2. Los archivos stageables deben venir de `FEATURE_PROPOSAL`.
-3. El executor no puede usar patrones amplios para añadir archivos.
-4. El executor no puede convertir archivos detectados por `git status` en permitidos automáticamente.
-5. Si aparece un archivo no previsto, bloquear.
-6. Si aparece un archivo generado, bloquear salvo generador explícitamente autorizado.
-
-Prohibido:
-
-```text
-git add .
-git add -A
-git add *
-git add docs/
-git add <directorio>
-```
-
-Permitido solo:
-
-```text
-git add <archivo_concreto_previsto>
-```
-
-Bloqueo:
-
-```text
-FEATURE_BLOCKED
-```
-
-Motivo:
-
-```text
-unexpected_file_or_auto_discovery
-```
-
----
-
 ## Protected Zones / Denylist
 
 El executor debe aplicar `docs/protected-zones-blacklist-v0-1.md` antes de cualquier acción.
+
+La blacklist prevalece siempre.
 
 ### BLOCK por defecto
 
@@ -317,6 +329,115 @@ El executor debe aplicar `docs/protected-zones-blacklist-v0-1.md` antes de cualq
 - rutas de riesgo medio explícitamente previstas.
 
 Si una ruta coincide con varias reglas, se aplica la más restrictiva.
+
+---
+
+## Output Size Guard
+
+El executor debe evitar generar o mostrar salidas excesivas.
+
+Aunque v0.1 solo expone metadata, todo output debe tener límites.
+
+Límites v0.1:
+
+```text
+max_stdout_bytes: 12000
+max_stderr_bytes: 4000
+max_json_bytes: 16000
+max_files_listed: 100
+max_command_duration_seconds: 10
+```
+
+Reglas:
+
+- si la salida excede límite, truncar y marcar `truncated: true`;
+- si `diff-name-only` lista más de `max_files_listed`, bloquear;
+- si `diff-stat` excede límite, bloquear;
+- no imprimir contenido sensible aunque esté dentro del límite;
+- no devolver stdout/stderr crudo sin resumen estructurado.
+
+Bloqueo:
+
+```text
+FEATURE_BLOCKED
+```
+
+Motivo:
+
+```text
+output_size_guard_exceeded
+```
+
+---
+
+## Secret Pattern Guard
+
+Si aparece un patrón de secreto en cualquier output, el executor debe bloquear.
+
+Patrones conceptuales:
+
+```text
+token
+secret
+password
+credential
+api_key
+apikey
+authorization
+bearer
+private_key
+```
+
+Regla:
+
+```text
+secret_pattern_in_output -> FEATURE_BLOCKED
+```
+
+El executor no debe intentar “arreglar” o guardar el secreto.
+
+Debe devolver solo metadata mínima del bloqueo, sin imprimir el valor.
+
+---
+
+## No Auto-Discovery
+
+El executor no debe descubrir automáticamente nuevos archivos para modificar, stagear o validar.
+
+En v0.1 no existe modificación, staging ni validación de archivos, pero la regla aplica igualmente:
+
+1. Los archivos consultados con `file-exists` deben venir de `FEATURE_PROPOSAL` o ser rutas no sensibles explícitamente permitidas.
+2. El executor no puede convertir archivos detectados por `git status` en permitidos automáticamente.
+3. Si aparece un archivo inesperado en metadata Git, debe reportarlo como metadata, no actuar sobre él.
+4. Si aparece un archivo generado o sensible en metadata Git, debe bloquear.
+
+Prohibido:
+
+```text
+git add .
+git add -A
+git add *
+git add docs/
+git add <directorio>
+```
+
+Permitido en v0.1:
+
+```text
+ningún git add
+```
+
+Bloqueo:
+
+```text
+FEATURE_BLOCKED
+```
+
+Motivo:
+
+```text
+unexpected_file_or_auto_discovery
+```
 
 ---
 
@@ -353,6 +474,11 @@ force push
 auto-merge
 systemd/cron/timers
 service modification
+branch creation
+file writing
+staging
+commit
+content read
 ```
 
 Motivo:
@@ -368,7 +494,15 @@ executor_scope_lock_violation
 ```text
 git add .
 git add -A
+git add *
+git add <directorio>
+git commit
 git commit -am
+git checkout main
+git checkout -b
+git pull
+git fetch
+git push
 git push origin main
 git push --force
 git push --force-with-lease
@@ -376,6 +510,7 @@ git merge
 git rebase
 git reset --hard
 git clean -fd
+gh
 gh pr merge
 sudo
 curl
@@ -383,6 +518,11 @@ wget
 docker
 systemctl
 crontab
+cat
+head
+tail
+sed
+grep
 ```
 
 También prohibido:
@@ -394,12 +534,97 @@ También prohibido:
 - redirecciones arbitrarias;
 - backticks;
 - `$()`;
-- ejecución de scripts no previstos;
-- lectura de rutas sensibles.
+- ejecución de scripts;
+- lectura de rutas sensibles;
+- lectura de contenido de archivos.
 
 ---
 
-## Diseño técnico esperado
+## Salida JSON estructurada obligatoria
+
+Toda respuesta del executor debe ser JSON estructurada.
+
+No se permite devolver stdout/stderr crudo directamente al usuario.
+
+Campos mínimos:
+
+```json
+{
+  "ok": true,
+  "action": "status",
+  "repo": "/openclaw/workspace/git_clean/neodaemon_repo",
+  "blocked": false,
+  "reason": null,
+  "stdout_summary": "",
+  "stderr_summary": "",
+  "truncated": false,
+  "metadata": {}
+}
+```
+
+En bloqueo:
+
+```json
+{
+  "ok": false,
+  "action": "diff-name-only",
+  "repo": "/openclaw/workspace/git_clean/neodaemon_repo",
+  "blocked": true,
+  "reason": "secret_pattern_in_output",
+  "stdout_summary": "",
+  "stderr_summary": "",
+  "truncated": false,
+  "metadata": {
+    "next": "FEATURE_BLOCKED"
+  }
+}
+```
+
+Reglas:
+
+- `stdout_summary` debe ser resumen, no dump completo;
+- `stderr_summary` debe ser resumen, no dump completo;
+- `metadata` no debe contener secretos;
+- si hay duda, bloquear;
+- si la salida supera límites, truncar o bloquear según severidad.
+
+---
+
+## Auditoría sin secretos
+
+El executor puede registrar metadata mínima para auditoría local futura, pero v0.1 no debe escribir logs persistentes salvo diseño separado.
+
+Metadata permitida conceptualmente:
+
+```text
+timestamp
+action
+repo
+allowed/blocked
+reason
+duration_ms
+files_count
+truncated
+```
+
+Prohibido registrar:
+
+```text
+tokens
+prompts
+responses
+file contents
+full diffs
+credentials
+stdout crudo
+stderr crudo
+```
+
+Si una auditoría persistente se diseña en el futuro, requiere aprobación separada.
+
+---
+
+## Diseño técnico esperado futuro
 
 Cuando se implemente en una fase futura, el executor debe:
 
@@ -410,84 +635,75 @@ Cuando se implemente en una fase futura, el executor debe:
 - validar rutas antes de cada acción;
 - aplicar denylist antes de allowlist;
 - aplicar output size guard;
+- aplicar secret pattern guard;
 - no guardar prompts/respuestas;
 - no guardar tokens;
-- registrar solo metadata mínima;
-- devolver errores estructurados;
+- no devolver stdout/stderr crudo;
+- devolver JSON estructurado siempre;
 - fallar cerrado.
-
-Ejemplo conceptual de salida:
-
-```json
-{
-  "ok": true,
-  "action": "diff-stat",
-  "risk": "low",
-  "blocked": false,
-  "truncated": false
-}
-```
-
-Ejemplo conceptual de bloqueo:
-
-```json
-{
-  "ok": false,
-  "action": "stage-explicit-files",
-  "blocked": true,
-  "reason": "unexpected_file_or_auto_discovery",
-  "next": "FEATURE_BLOCKED"
-}
-```
 
 ---
 
 ## Flujo v0.1
 
-### 1. Precheck
+### 1. Precheck interno
 
-- confirmar repo root;
-- confirmar rama actual;
-- confirmar `main` limpio y actualizado;
-- confirmar working tree limpio;
-- confirmar archivos previstos;
-- aplicar blacklist;
-- estimar riesgo.
+- confirmar repo root en allowlist;
+- confirmar acción en allowlist v0.1;
+- confirmar que no hay rutas sensibles;
+- confirmar que no se requiere red;
+- confirmar que no se requiere lectura de contenido;
+- confirmar límites de output.
 
-### 2. Aprobación humana
+### 2. Ejecución read-only
 
-Según clasificación:
+Ejecutar solo una de:
 
-- `OK FEATURE` para feature normal;
-- `CONFIRMACIÓN_ESPECIAL` para meta-workflow o zonas especiales.
+```text
+status
+current-branch
+diff-stat
+diff-name-only
+file-exists
 
-### 3. Trabajo local
+```
 
-- crear rama;
-- modificar solo archivos previstos;
-- validar;
-- revisar diff;
-- stage explícito;
-- commit.
+### 3. Resultado estructurado
 
-### 4. Resultado
+Devolver JSON estructurado.
 
-Presentar `FEATURE_READY_FOR_GITHUB` si el trabajo local queda listo.
+Si hay bloqueo, elevar a:
 
-El executor v0.1 no ejecuta `OK GITHUB`; solo prepara el estado local.
-
+```text
+FEATURE_BLOCKED
+```
 ---
 
-## Acciones GitHub fuera de alcance v0.1
+## Acciones fuera de alcance v0.1
 
-Quedan para fase futura:
+Quedan fuera de v0.1:
 
-- `push-branch`;
-- `create-pr`.
+```text
+diff completo
+log-oneline
+show-file-range
+grep
+sed
+create-branch
+write-planned-file
+validate-files
+stage-explicit-files
+commit-feature
+git checkout main
+git checkout -b
+git pull origin main
+push-branch
+create-pr
+```
 
 Estas acciones no pertenecen al executor v0.1.
 
-Fase futura requerirá nuevo diseño y aprobación especial.
+Fases futuras requerirán nuevo diseño y aprobación especial.
 
 ---
 
@@ -504,12 +720,19 @@ Prohibido:
 - aceptar token por env;
 - escribir token en remoto Git;
 - usar `gh auth`;
-- usar GitHub API.
+- usar GitHub API;
+- usar red.
 
 Si aparece una necesidad de autenticación:
 
 ```text
 FEATURE_BLOCKED
+```
+
+Motivo:
+
+```text
+auth_not_allowed_in_v0_1
 ```
 
 ---
@@ -518,32 +741,44 @@ FEATURE_BLOCKED
 
 1. Convertir el wrapper en shell indirecta.
 2. Permitir rutas amplias que evadan la blacklist.
-3. Imprimir diffs demasiado grandes o sensibles.
-4. Stagear archivos no previstos.
-5. Ampliar capacidades GitHub antes de tiempo.
+3. Imprimir metadata que contenga patrones de secreto.
+4. Convertir `diff-name-only` en auto-discovery.
+5. Ampliar capacidades locales antes de tiempo.
 6. Modificar el propio workflow sin confirmación especial.
 
 Mitigaciones:
 
-- local-only;
+- inspector read-only;
+- allowlist de 5 acciones;
 - repo root lock;
 - output size guard;
+- secret pattern guard;
 - no auto-discovery;
 - executor scope lock;
 - blacklist primero;
+- JSON estructurado;
 - fail closed.
 
 ---
 
 ## Criterios mínimos antes de implementar PR futuro
 
-Antes de crear `scripts/github_workflow_executor.py`, debe existir:
+Antes de crear cualquier código executor debe existir:
 
 1. PR de blacklist merged.
-2. PR de este diseño merged.
+2. PR de este diseño hardened merged.
 3. Confirmación especial para código ejecutable.
-4. Tests del executor diseñados antes de ampliar capacidades.
-5. SELF_CHECK_PYTHON obligatorio.
+4. Tests diseñados para:
+   - repo allowlist;
+   - path escape;
+   - symlink escape;
+   - output limits;
+   - secret pattern guard;
+   - no content read;
+   - no network;
+   - no shell=True;
+   - no commands outside allowlist.
+5. SELF_CHECK_PYTHON obligatorio si el futuro executor se implementa en Python.
 
 ---
 
@@ -554,6 +789,11 @@ Este documento solo diseña el executor.
 No autoriza:
 
 - implementación;
+- escritura de archivos;
+- validación de código;
+- branch creation;
+- staging;
+- commit;
 - push;
 - PR;
 - GitHub auth;
@@ -562,3 +802,13 @@ No autoriza:
 - tokens;
 - servicios;
 - automatización persistente.
+
+Executor v0.1 queda limitado a:
+
+```text
+status
+current-branch
+diff-stat
+diff-name-only
+file-exists
+```
