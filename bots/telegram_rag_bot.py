@@ -97,6 +97,29 @@ def main():
                     if not question:
                         send_message(chat_id, "Uso: /main tu mensaje")
                         continue
+                    cleanup_match = re.fullmatch(r"OK CLEANUP ([A-Fa-f0-9]{7,40})", question)
+                    if cleanup_match:
+                        request = {
+                            "action": "github_post_merge_cleanup_assistant",
+                            "confirmation": f"OK CLEANUP {cleanup_match.group(1)}",
+                        }
+                        result = subprocess.run(
+                            [
+                                "tools/neodaemon_executor_bridge.sh",
+                                json.dumps(request, separators=(",", ":")),
+                            ],
+                            cwd="/openclaw/workspace/git_clean/neodaemon_v1",
+                            text=True,
+                            capture_output=True,
+                            timeout=120,
+                            check=False,
+                        )
+                        output = (result.stdout or result.stderr or "").strip()
+                        if not output:
+                            output = '{"status":"BLOCKED","summary":"empty cleanup assistant output","safe":true,"logs_redacted":true}'
+                        send_message(chat_id, output[:3900])
+                        continue
+
                     answer = ask_main(question)
                     send_message(chat_id, answer)
                     continue
