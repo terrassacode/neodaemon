@@ -1,3 +1,4 @@
+import re
 import json
 import time
 import requests
@@ -6,6 +7,16 @@ from main_handler import ask_main
 from dotenv import load_dotenv
 import os
 load_dotenv("/openclaw/.env")
+
+
+def redact_secret(text):
+    text = "" if text is None else str(text)
+    text = re.sub(r"https://api\.telegram\.org/bot[^\s\"']+", "[REDACTED_TELEGRAM_BOT_API_URL]", text)
+    text = re.sub(r"api\.telegram\.org/bot[^\s\"']+", "api.telegram.org/bot[REDACTED]", text)
+    text = re.sub(r"bot[0-9]{6,}:[A-Za-z0-9_-]+", "bot[REDACTED]", text)
+    text = re.sub(r"token=[^\s&\"']+", "token=***", text)
+    text = re.sub(r"TELEGRAM_BOT_TOKEN=[^\s\"']+", "TELEGRAM_BOT_TOKEN=***", text)
+    return text
 
 CONFIG = "/home/openclaw/.openclaw/openclaw.json"
 API_URL = "http://127.0.0.1:5001/rag-ask"
@@ -86,6 +97,29 @@ def main():
                     if not question:
                         send_message(chat_id, "Uso: /main tu mensaje")
                         continue
+                    cleanup_match = re.fullmatch(r"OK CLEANUP ([A-Fa-f0-9]{7,40})", question)
+                    if cleanup_match:
+                        request = {
+                            "action": "github_post_merge_cleanup_assistant",
+                            "confirmation": f"OK CLEANUP {cleanup_match.group(1)}",
+                        }
+                        result = subprocess.run(
+                            [
+                                "tools/neodaemon_executor_bridge.sh",
+                                json.dumps(request, separators=(",", ":")),
+                            ],
+                            cwd="/openclaw/workspace/git_clean/neodaemon_v1",
+                            text=True,
+                            capture_output=True,
+                            timeout=120,
+                            check=False,
+                        )
+                        output = (result.stdout or result.stderr or "").strip()
+                        if not output:
+                            output = '{"status":"BLOCKED","summary":"empty cleanup assistant output","safe":true,"logs_redacted":true}'
+                        send_message(chat_id, output[:3900])
+                        continue
+
                     answer = ask_main(question)
                     send_message(chat_id, answer)
                     continue
@@ -218,7 +252,7 @@ def main():
                 send_message(chat_id, answer)
 
         except Exception as e:
-            print("ERROR:", e)
+            print("ERROR:", redact_secret(e))
             time.sleep(5)
 
 if __name__ == "__main__":
